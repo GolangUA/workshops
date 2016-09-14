@@ -1,4 +1,7 @@
 # How to use DMS in Golang
+## DMS overview
+* Relational Database Management Systems
+* NoSQL and NewSQL
 
 ## Test task:
 Develop a system able to collect SDK events, count events by type in real-time and upload it to any data sotrage.
@@ -11,5 +14,7 @@ The event has next structure:
 ## Preparetion stemp
 1. Create API to handle such type of calls
 2. Add counter
-3. Implement data validation
+3. Parse data from request (test request curl -X POST -H 'Content-Type: application/json' -d '{"eventType":"session_start","ts":1473837996,"params":{"first":1,"second":"Two"}}' http://127.0.0.1:8080
+4. Prepare data to save
+5. 
 

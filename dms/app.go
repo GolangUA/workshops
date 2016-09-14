@@ -1,22 +1,29 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"sync/atomic"
 )
 
 type Message struct {
-	EventType string
-	Ts        int64
-	Params    map[string]interface{}
+	EventType string                 `json:"eventType"`
+	Ts        int64                  `json:"ts"`
+	Params    map[string]interface{} `json:"params"`
 }
 
 var messCnt int64
 
 func handleProcess(w http.ResponseWriter, r *http.Request) {
+	var ms Message
+	err := json.NewDecoder(r.Body).Decode(&ms)
+	if err != nil {
+		log.Printf("Can't decode JSON: %v", err)
+		return
+	}
 	messCnt := atomic.AddInt64(&messCnt, 1)
-	log.Printf("Message %d was processed\n", messCnt)
+	log.Printf("%d Message %#v was processed\n", messCnt, ms)
 }
 
 func main() {
