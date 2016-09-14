@@ -1,29 +1,26 @@
 package main
 
 import (
-	"encoding/json"
+	"database/sql"
 	"log"
 	"net/http"
-	"sync/atomic"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
+//Step4: define the Message structure and add logic to the handler function
 type Message struct {
-	EventType string                 `json:"eventType"`
-	Ts        int64                  `json:"ts"`
-	Params    map[string]interface{} `json:"params"`
 }
 
-var messCnt int64
+//Step3: set global variable as message counter
 
+//Step2: fill the API handler
 func handleProcess(w http.ResponseWriter, r *http.Request) {
-	var ms Message
-	err := json.NewDecoder(r.Body).Decode(&ms)
-	if err != nil {
-		log.Printf("Can't decode JSON: %v", err)
-		return
-	}
-	messCnt := atomic.AddInt64(&messCnt, 1)
-	log.Printf("%d Message %#v was processed\n", messCnt, ms)
+	log.Printf("%d Message %#v was processed\n", 0, nil)
+}
+
+//Step5: create connection with DB, docker-compose should be used for launch DB
+func connect2Db() sql.DB {
 }
 
 func main() {
