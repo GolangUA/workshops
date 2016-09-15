@@ -8,18 +8,26 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-//Step4: define the Message structure and add logic to the handler function
-type Message struct {
+type Task struct {
 }
 
-//Step3: set global variable as message counter
+//Step3: Implement of interaction with database
+type dbDriver interface {
+	Create(t Task) error
+	ReadById(id int64) (*Task, error)
+	ReadByAlias(alias string) (*Task, error)
+	Update(t Task) error
+	Delete(t Task) error
+}
 
-//Step2: fill the API handler
+//Step2: Create API to handles such type of calls or use exists routes
 func handleProcess(w http.ResponseWriter, r *http.Request) {
-	log.Printf("%d Message %#v was processed\n", 0, nil)
+	log.Printf("%d request %#v was processed\n", 0, nil)
 }
 
-//Step5: create connection with DB, docker-compose should be used for launch DB
+//Step4: Implement CRUD handlers
+
+//Step3: create connection with DB, docker-compose should be used for launch DB
 func connect2Db() sql.DB {
 }
 
