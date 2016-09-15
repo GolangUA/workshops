@@ -1,7 +1,7 @@
 # How to use DMS in Golang
 ## DMS overview
 * Relational Database Management Systems ([SQLite](https://www.sqlite.org/cli.html), [PostgreSQL](https://astaxie.gitbooks.io/build-web-application-with-golang/content/en/05.4.html))
-* NoSQL and NewSQL ([MongoDB](https://godoc.org/labix.org/v2/mgo), [Redis](https://github.com/go-redis/redis), [Apache Cassanra](https://academy.datastax.com/resources/getting-started-apache-cassandra-and-go))
+* NoSQL and NewSQL ([MongoDB](https://godoc.org/labix.org/v2/mgo), [Redis](https://github.com/go-redis/redis), [Apache Cassandra](https://academy.datastax.com/resources/getting-started-apache-cassandra-and-go))
 
 ## Test task:
 Develop a TODO system: API with CRUD operations:
@@ -11,15 +11,15 @@ Develop a TODO system: API with CRUD operations:
 - update task
 - delete task
 
-## Preparetion stemp
-1. Prepare enviroment: [Docker](https://www.docker.com/products/docker) [Docker Compose](https://docs.docker.com/compose/overview/)
-2. Create API to handles such type of calls (replase comments from app.go)
+## Preparation steps
+1. Prepare environment: [Docker](https://www.docker.com/products/docker) [Docker Compose](https://docs.docker.com/compose/overview/)
+2. Create API to handles such type of calls (replace comments from app.go)
 3. Implement of interaction with database
 
 - implement DB driver
 - add support for docker container
 - add DB schema (if needed)
-- implement 4 operations
+- implement CRUD operations
 
 4. Handle the request 
    
@@ -43,5 +43,5 @@ docker images #find your image hash
 docker run --rm -it -v sqlite.db:/app/sqlite.db <image-hash>
 ```
 7. Test request with data:
-`curl -X POST -H 'Content-Type: application/json' -d '{"alias":"go-dms-workshop","desc":"Create app and try it with different DMS", "type":"important", "ts":1473837996,"tegs":["Golang","Workshop","DMS"],"etime":"4h","rtime":"8h","reminders":["3h", "15m"]}' http://127.0.0.1:8080`
+`curl -X POST -H 'Content-Type: application/json' -d '{"alias":"go-dms-workshop","desc":"Create app and try it with different DMS", "type":"important", "ts":1473837996,"tags":["Golang","Workshop","DMS"],"etime":"4h","rtime":"8h","reminders":["3h", "15m"]}' http://127.0.0.1:8080`
 
