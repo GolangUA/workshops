@@ -14,8 +14,8 @@ type Task struct {
 //Step3: Implement of interaction with database
 type dbDriver interface {
 	Create(t Task) error
-	ReadById(id int64) (*Task, error)
-	ReadByAlias(alias string) (*Task, error)
+	ReadById(id *int64) (*Task, error)
+	ReadByAlias(alias *string) (*Task, error)
 	Update(t Task) error
 	Delete(t Task) error
 }
