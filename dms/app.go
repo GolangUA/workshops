@@ -11,11 +11,13 @@ import (
 type Task struct {
 }
 
+type TaskList []Task
+
 //Step3: Implement of interaction with database
 type dbDriver interface {
 	Create(t Task) error
-	ReadById(id *int64) (*Task, error)
-	ReadByAlias(alias *string) (*Task, error)
+	ReadById(id *int64) (TaskList, error)
+	ReadByAlias(alias *string) (TaskList, error)
 	Update(t Task) error
 	Delete(t Task) error
 }

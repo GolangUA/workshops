@@ -6,7 +6,7 @@
 ## Test task:
 Develop a TODO system: API with CRUD operations:
 
-- create new task (id, alias, description, type [urgent, important, general], tegs, timestamp, estimate-time, real-time, reminders)
+- create new task (id (int), alias (string), description (string), type (set of string: [urgent, important, general]), tags (set of srting: [personal, work, vacation]), timestamp (int), estimate-time (string), real-time (string), reminders (set of strings: ["3h", "15m"]))
 - read tasks, or one task by id/alias
 - update task
 - delete task
