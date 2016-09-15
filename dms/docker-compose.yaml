@@ -1,0 +1,8 @@
+app:
+  build: .
+  links:
+    - db
+db:
+  image: kiasaki/alpine-postgres
+  ports:
+    - "5432"

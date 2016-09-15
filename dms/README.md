@@ -20,9 +20,11 @@ Develop a TODO system: API with CRUD operations:
 - add support for docker container
 - add DB schema (if needed)
 - implement 4 operations
+
 4. Handle the request 
    
    test request: `curl http://127.0.0.1:8080`
+   
 5. Prepare data to save (use [SQLite3](https://hub.docker.com/r/spartakode/sqlite3/), [switch from SQLite to PostgreSQL](https://blog.codeship.com/running-rails-development-environment-docker/))
 
 ```
@@ -41,6 +43,5 @@ docker images #find your image hash
 docker run --rm -it -v sqlite.db:/app/sqlite.db <image-hash>
 ```
 7. Test request with data:
-
 `curl -X POST -H 'Content-Type: application/json' -d '{"alias":"go-dms-workshop","desc":"Create app and try it with different DMS", "type":"important", "ts":1473837996,"tegs":["Golang","Workshop","DMS"],"etime":"4h","rtime":"8h","reminders":["3h", "15m"]}' http://127.0.0.1:8080`
 
