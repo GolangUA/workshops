@@ -13,5 +13,5 @@
 5. Make test calls to your API
 
 Related:
-[add static file](http://stackoverflow.com/questions/30400477/how-to-open-local-files-in-swagger-ui)
+[add static file](http://stackoverflow.com/questions/30400477/how-to-open-local-files-in-swagger-ui),
 [Swagger for Node.js](https://blog.risingstack.com/swagger-nodejs/)
