@@ -1,0 +1,6 @@
+Dockerfile
+vendor
+README.md
+glide*
+*.go
+*.db
