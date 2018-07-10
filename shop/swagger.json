@@ -5,7 +5,7 @@
   ],
   "info": {
     "description": "From the Lviv GoBootCamp",
-    "title": "A Shop application",
+    "title": "Shop",
     "version": "1.0.0"
   },
   "produces": [
@@ -41,7 +41,10 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/itemList"
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/item"
+              }
             }
           },
           "default": {
@@ -273,12 +276,6 @@
           "type": "integer",
           "minimum": 0
         }
-      }
-    },
-    "itemList": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/item"
       }
     },
     "category": {

@@ -33,19 +33,21 @@ GET /assets - for static files like pictures, js, css
 
 ## tools
 
-[[https://awesome-go.com/][awsome-go]]
+[awsome-go](https://awesome-go.com/)
 
-[[https://docs.docker.com/get-started/][docker]]
-[[https://docs.docker.com/compose/][docker-compose]]
+[docker](https://docs.docker.com/get-started/)
+[docker-compose](https://docs.docker.com/compose/)
 
-[[https://github.com/urfave/cli][A simple, fast, and fun package for building command line apps in Go]]
+[Buffalo](https://gobuffalo.io/en)
 
-[[github.com/go-swagger/go-swagger][go-swagger]]
-[[https://goswagger.io/tutorial/todo-list][example of todo list server]]
+[A simple, fast, and fun package for building command line apps in Go](https://github.com/urfave/cli)
 
-[[https://github.com/cweill/gotests][table tests generator]]
-[[https://github.com/golang/mock][Mock generator]]
-[[https://github.com/icrowley/fake][generator of fake data]]
+[go-swagger](github.com/go-swagger/go-swagger)
+[example of todo list server](https://goswagger.io/tutorial/todo-list)
+
+[table tests generator](https://github.com/cweill/gotests)
+[Mock generator](https://github.com/golang/mock)
+[generator of fake data](https://github.com/icrowley/fake)
 
 ## Additional
 
