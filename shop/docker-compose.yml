@@ -1,0 +1,23 @@
+version: "3"
+services:
+  db:
+    image: postgres:10.4-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=shop
+
+  api:
+    image: shop-api
+    ports:
+      - "8080:3000"
+    deploy:
+      resources:
+        limits:
+          memory: 50Mb
+    links:
+      - db
+    depends_on:
+      - db
