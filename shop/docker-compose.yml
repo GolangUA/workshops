@@ -1,4 +1,4 @@
-version: "3"
+version: "2.0"
 services:
   db:
     image: postgres:10.4-alpine
@@ -13,10 +13,8 @@ services:
     image: shop-api
     ports:
       - "8080:3000"
-    deploy:
-      resources:
-        limits:
-          memory: 50Mb
+    mem_limit: 50Mb
+    memswap_limit: 50Mb
     links:
       - db
     depends_on:
