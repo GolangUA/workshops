@@ -1,0 +1,377 @@
+{
+  "swagger": "2.0",
+  "consumes": [
+    "application/json"
+  ],
+  "info": {
+    "description": "From the Lviv GoBootCamp",
+    "title": "Shop",
+    "version": "1.0.0"
+  },
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "http"
+  ],
+  "basePath": "/v1",
+  "paths": {
+    "/items": {
+      "get": {
+        "tags": [
+          "client"
+        ],
+        "operationId": "getItems",
+        "summary": "Gets a list of items",
+        "parameters": [
+          {
+            "$ref": "#/parameters/offsetParam"
+          },
+          {
+            "$ref": "#/parameters/limitParam"
+          },
+          {
+            "in": "query",
+            "name": "categoryID",
+            "type": "integer",
+            "description": "CategoryID for filtration"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/item"
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/items/{itemID}": {
+      "get": {
+        "tags": [
+          "client"
+        ],
+        "operationId": "getItem",
+        "summary": "Gets one item",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "itemID",
+            "type": "integer",
+            "required": true,
+            "description": "ItemID for search"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/item"
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/categories": {
+      "get": {
+        "tags": [
+          "client"
+        ],
+        "operationId": "getCategories",
+        "summary": "Gets a list of categories",
+        "parameters": [
+          {
+            "$ref": "#/parameters/offsetParam"
+          },
+          {
+            "$ref": "#/parameters/limitParam"
+          },
+          {
+            "in": "query",
+            "name": "categoryID",
+            "type": "integer",
+            "description": "CategoryID for filtration (parent)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/category"
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/categories/{categoryID}": {
+      "get": {
+        "tags": [
+          "client"
+        ],
+        "operationId": "getCategory",
+        "summary": "Gets one Category",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "categoryID",
+            "type": "integer",
+            "required": true,
+            "description": "CategeoryID for search"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/category"
+            }
+          },
+          "404": {
+            "description": "Category not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/orders": {
+      "post": {
+        "tags": [
+          "client"
+        ],
+        "operationId": "createOrder",
+        "summary": "Create new order",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/order"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/orders/{orderID}": {
+      "put": {
+        "tags": [
+          "client"
+        ],
+        "operationId": "addItemToOrder",
+        "summary": "Add item to order",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "orderID",
+            "type": "integer",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "item",
+            "schema": {
+              "$ref": "#/definitions/item"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/order"
+            }
+          },
+          "404": {
+            "description": "Order not found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "item": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "readOnly": true
+        },
+        "alias": {
+          "type": "string",
+          "minLength": 3
+        },
+        "title": {
+          "type": "string",
+          "minLength": 10
+        },
+        "desc": {
+          "type": "string",
+          "minLength": 10
+        },
+        "price": {
+          "type": "number",
+          "format": "double",
+          "minimum": 1
+        },
+        "pictures": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "category": {
+      "type": "object",
+      "required": [
+        "alias",
+        "title"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "readOnly": true
+        },
+        "alias": {
+          "type": "string",
+          "minLength": 3
+        },
+        "title": {
+          "type": "string",
+          "minLength": 10
+        },
+        "desc": {
+          "type": "string",
+          "minLength": 10
+        },
+        "parentID": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "logo": {
+          "type": "string",
+          "minLength": 3
+        }
+      }
+    },
+    "order": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "readOnly": true
+        },
+        "sum": {
+          "type": "number",
+          "format": "double",
+          "readOnly": true
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "new",
+            "creat",
+            "confirm",
+            "paied",
+            "processed",
+            "finished"
+          ]
+        }
+      }
+    },
+    "error": {
+      "type": "object",
+      "required": [
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "parameters": {
+    "offsetParam": {
+      "in": "query",
+      "name": "offset",
+      "required": false,
+      "type": "integer",
+      "minimum": 0,
+      "description": "The number of items to skip before starting to collect the result set."
+    },
+    "limitParam": {
+      "in": "query",
+      "name": "limit",
+      "required": false,
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 50,
+      "default": 20,
+      "description": "The numbers of items to return."
+    }
+  }
+}

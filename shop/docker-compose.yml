@@ -1,0 +1,21 @@
+version: "2.0"
+services:
+  db:
+    image: postgres:10.4-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=shop
+
+  api:
+    image: shop-api
+    ports:
+      - "8080:3000"
+    mem_limit: 50Mb
+    memswap_limit: 50Mb
+    links:
+      - db
+    depends_on:
+      - db
