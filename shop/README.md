@@ -53,8 +53,18 @@ go get -u -v github.com/gobuffalo/buffalo/buffalo
 
 ```
 buffalo new api --api --vcs none --docker standard
+```
+
+for launch API localy (http://localhost:3000):
+```
+buffalo dev
+```
+
+four build docker image use this:
+```
 cd ./api
 GOOS=linux buffalo build -k -o ./app
+cd ../
 docker build -t shop-api .
 ```
 
@@ -70,6 +80,7 @@ buffalo generate actions orders update --method PUT --skip-template
 ```
 
 Note: You should change [render](https://godoc.org/github.com/gobuffalo/buffalo/render#Engine.JSON) from HTML to JSON manually at each handler
+Note 2: Remember about API prefix `/v1` and other routes conventions from Swagger
 
 Validation: `buffalo routes` or inside container `api`: `./app task routes`
 
@@ -88,6 +99,7 @@ Note: You may change structure if have your own vision at data structure.
 
 Based on [fake](https://github.com/icrowley/fake) generate categories (two levels: 5-15 first level with 5-20 on each), items for 50-150 items on each category
 
+Note: update `database.yml` with proper DB access creds: `host=db user=postgres password=postgres database=shop`
 Note: for execution go inside container `docker-compose exec api /bin/sh` and run task: `./app task seed`
 
 ### 6. Implement handler logic
