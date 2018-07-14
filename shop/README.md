@@ -1,6 +1,6 @@
 # Shop API
 
-Let's create API of some common online shop:
+Let's create API for some common online shop:
 
 ## DB entity
 
@@ -52,7 +52,7 @@ go get -u -v github.com/gobuffalo/buffalo/buffalo
 ### 1. Generate API
 
 ```
-buffalo new api --api --vcs none
+buffalo new api --api --vcs none --docker standard
 cd ./api
 GOOS=linux buffalo build -k -o ./app
 docker build -t shop-api .
@@ -69,9 +69,9 @@ buffalo generate actions orders create --method POST --skip-template
 buffalo generate actions orders update --method PUT --skip-template
 ```
 
-Note: You should change [render](https://godoc.org/github.com/gobuffalo/buffalo/render#Engine.JSON) from HTML to JSON manualy at each handler
+Note: You should change [render](https://godoc.org/github.com/gobuffalo/buffalo/render#Engine.JSON) from HTML to JSON manually at each handler
 
-Validateion: `buffalo routes` or inside container `shop-api`: `./app task routes`
+Validation: `buffalo routes` or inside container `api`: `./app task routes`
 
 ### 4. Generate Models
 
@@ -88,11 +88,11 @@ Note: You may change structure if have your own vision at data structure.
 
 Based on [fake](https://github.com/icrowley/fake) generate categories (two levels: 5-15 first level with 5-20 on each), items for 50-150 items on each category
 
-Note: for execution go inside container `docker-compose exec shop-api /bin/sh` and run task: `./app task seed`
+Note: for execution go inside container `docker-compose exec api /bin/sh` and run task: `./app task seed`
 
 ### 6. Implement handler logic
 
-Write business logic for select, filter of categories, items, creat and update orders
+Write business logic for selecting, filtering of categories, items, create and update orders
 
 ### 7. Implement tooling for shop admin
 
@@ -125,4 +125,4 @@ Admin zone(/admin):
 * POST /import/categories - upload list of categories (json)
 * POST /import/items - upload list of items (json)
 * POST /import/pictures - upload archive of pictures for existing items (zip, alias suffix matching)
-* GET /exoprt/orders - download list of orders
+* GET /export/orders - download list of orders
