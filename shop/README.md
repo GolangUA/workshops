@@ -52,7 +52,7 @@ go get -u -v github.com/gobuffalo/buffalo/buffalo
 ### 1. Generate API
 
 ```
-buffalo new api --api --vcs none --docker standard
+buffalo new api --api --vcs none --docker none
 ```
 
 for launch API localy (http://localhost:3000):
