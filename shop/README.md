@@ -80,7 +80,8 @@ buffalo generate actions orders update --method PUT --skip-template
 ```
 
 Note: You should change [render](https://godoc.org/github.com/gobuffalo/buffalo/render#Engine.JSON) from HTML to JSON manually at each handler
-Note 2: Remember about API prefix `/v1` and other routes conventions from Swagger
+
+Note: Remember about API prefix `/v1` and other routes conventions from Swagger
 
 Validation: `buffalo routes` or inside container `api`: `./app task routes`
 
@@ -95,11 +96,36 @@ soda generate model ordered id:int order_id:int item_id:uuid item_cnt:int item_s
 
 Note: You may change structure if have your own vision at data structure.
 
+Note: for integrate with DB use docker-compose:
+```
+docker-compose up -d # you should have shop-api image
+```
+
+on any changes at codebase you should recreate docker image each time and after that:
+```
+docker-compose up -d api
+```
+
+for logs observation:
+```
+docker-compose up -d api
+```
+
+for migration execution:
+```
+docker-compose exec api /bin/sh
+./app migrate
+exit
+```
+
+
+
 ### 5. Create Seeds task
 
 Based on [fake](https://github.com/icrowley/fake) generate categories (two levels: 5-15 first level with 5-20 on each), items for 50-150 items on each category
 
 Note: update `database.yml` with proper DB access creds: `host=db user=postgres password=postgres database=shop`
+
 Note: for execution go inside container `docker-compose exec api /bin/sh` and run task: `./app task seed`
 
 ### 6. Implement handler logic
