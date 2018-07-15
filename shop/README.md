@@ -108,7 +108,7 @@ docker-compose up -d api
 
 for logs observation:
 ```
-docker-compose up -d api
+docker-compose logs -f api # without flag -f - just output all existed logs and stop
 ```
 
 for migration execution:
