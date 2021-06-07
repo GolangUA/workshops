@@ -13,7 +13,7 @@ Develop a cli tool that will:
 
 ## Preparation steps
 0. Initialize go mod
-1. Install https://github.com/spf13/cobra and read the documentation
+1. Install https://github.com/spf13/cobra or https://github.com/urfave/cli and read the documentation how to worl with these cli-tools libs.
 2. Create main and write code to parse flags.
 3. Implement the interaction with files and md5
 4. Implement json and xml validators
