@@ -2,14 +2,13 @@
 
 ## 1. Theory
 
-<a href="reflect.pdf" class="image fit"><img src="agenga.png" alt="agenda"></a>
+<a href="reflect.pdf" class="image fit"><img src="agenda.png" alt="agenda"></a>
 
 ## 2. Homework part.
 
 To implement own json.Marshal function starting with this code snippet
 
-
-[] https://play.golang.org/p/lzGTwz7jgpk
+https://play.golang.org/p/lzGTwz7jgpk
 
 ## 3. Add tags as json package
 
