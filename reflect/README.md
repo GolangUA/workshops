@@ -2,11 +2,11 @@
 
 ## 1. Theory
 
-<a href="reflect.pdf" class="image fit"><img src="agenda.png" alt="agenda"></a>
+<a href="reflect.pdf" class="image fit">Click here to open presentation (PDF)</a>
 
 ## 2. Homework part.
 
-To implement own json.Marshal function starting with this code snippet
+You need to implement your own json.Marshal function starting with this code snippet
 
 https://play.golang.org/p/lzGTwz7jgpk
 
@@ -27,8 +27,7 @@ Field int `json:"myName,omitempty"`
 TODO: 
  - Implement the same in the JSONEncode function
 
-## 4. Add more field`s types
+## 4. (Optional) Add more field`s types
 
-For now JSONEncode supports string and int64 type. Add more basic data types
+For now JSONEncode supports string and int64 type. Add more data types
 
-## 5. Just for fun: try to add support for maps, arrays or slices
