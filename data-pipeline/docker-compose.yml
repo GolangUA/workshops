@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  cassandra:
+    image: cassandra:3.10
+    environment:
+      - HEAP_NEWSIZE=1M
+      - MAX_HEAP_SIZE=128M
+    ports:
+      - "9042:9042"
+    volumes:
+      - cassandra-storage:/var/lib/cassandra
+  zookeeper:
+    image: zookeeper
+    ports:
+      - "2181:2181"
+  kafka:
+    image: wurstmeister/kafka
+    ports:
+      - "9092:9092"
+    environment:
+      - KAFKA_ADVERTISED_HOST_NAME=localhost
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper
+    depends_on:
+      - zookeeper
+volumes:
+  cassandra-storage:
