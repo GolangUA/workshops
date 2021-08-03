@@ -1,0 +1,30 @@
+syntax = "proto3";
+package chat;
+import "google/protobuf/timestamp.proto";
+
+import "person.proto";
+
+option go_package = "github.com/grpc-example/pb";
+
+message Message {
+  uint32 id = 1;
+  enum Status {
+    Active = 0;
+    Typing = 1;
+    Exiting = 2;
+  }
+
+  message Nested {
+    string im_nasted = 1;
+  }
+
+  string body = 2;
+  int32 number = 3;
+  repeated string phone_numbers = 4; // list
+  person.Person person_info = 5;
+  google.protobuf.Timestamp last_updated = 6;
+}
+
+service ChatService {
+  rpc SayHello (Message) returns (Message);
+}
