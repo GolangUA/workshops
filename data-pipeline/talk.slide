@@ -11,7 +11,7 @@ Anastasiia Skliar
 - Homework
 
 
-* 
+* Distributed systems
 .image talk/images/distributed-system.jpeg
 
 * Kafka
@@ -32,7 +32,7 @@ Kafka architecture has 4 actors. These are;
 - Consumer
 
 
-* 
+* Kafka
 .image talk/images/kafka.png
 
 * How to Write Data to Apache Kafka?
@@ -99,7 +99,7 @@ is Cassandra Query Language with SQL-like syntax
 
 .image talk/images/ddl.png
 
-*
+* Data model
 .image talk/images/data-model.png
 
 * Examples of consistency levels (there are more):
