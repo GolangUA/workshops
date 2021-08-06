@@ -30,6 +30,7 @@ Kafka architecture has 4 actors. These are;
 - Producer
 - Consumer
 
+
 * 
 .image talk/images/kafka.png
 
