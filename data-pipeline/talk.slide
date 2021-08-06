@@ -201,6 +201,10 @@ Create custom type example
 
 * Consumer Example in Go
 
+    import sarama_cluster "github.com/bsm/sarama-cluster"
+
+    ...
+
     kafConfig := sarama_cluster.NewConfig()
     kafConfig.ClientID = "go_test"
     kafConfig.Consumer.Return.Errors = true
