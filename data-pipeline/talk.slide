@@ -141,12 +141,112 @@ Tweets, News, Posts
 
 * Create keyspace
 
-* Create table
+    cqlsh> CREATE KEYSPACE IF NOT EXISTS test
+    WITH REPLICATION = {
+        'class': 'SimpleStrategy',
+        'replication_factor': '1'}
+    AND DURABLE_WRITES = true;
+    cqlsh> use test;
+
+Create custom type example
+
+    cqlsh> CREATE TYPE payload (
+        "Name" text,
+        "Value" text
+    );
+*
+    cqlsh:test>CREATE TABLE example(
+        "ID" text,
+        "Bigint" Bigint,
+        "Blob" Blob, 
+        "Boolean" Boolean,
+        "Date" Date,
+        "Decimal" Decimal,
+        "Double" Double,
+        "Float" Float,
+        "Int" Int, 
+        "SmallInt" SmallInt, 
+        "Time" Time, 
+        "TimeStamp" TimeStamp,
+        "TimeUuid" TimeUuid,
+        "TinyInt" TinyInt,
+        "Varchar" Varchar,
+        "Uuid" Uuid,
+        "Inet" Inet,
+        "List" List<text>,
+        "Map" Map<text, int>,
+        "Set" Set<text>,
+        "Tuple" Tuple<int, int>,
+        "Varint" Varint,
+        "Custom" frozen<payload>,
+        PRIMARY KEY ("ID")
+    );
 
 * Consumer Example in Go
 
+    kafConfig := sarama_cluster.NewConfig()
+    kafConfig.ClientID = "go_test"
+    kafConfig.Consumer.Return.Errors = true
+    kafConfig.Consumer.Offsets.Initial = sarama.OffsetOldest
+
+    addrs := []string{"localhost:9092"}
+    kafClient, err := sarama_cluster.NewClient(addrs, kafConfig)
+
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    // Validate Config.
+    err = kafConfig.Validate()
+
+    if err != nil {
+        log.Fatal(err)
+    }
+
+* 
+    // Create consumer.
+    var topics = []string{"go_test"}
+    consumer, err := sarama_cluster.NewConsumerFromClient(kafClient, "go_test", topics)
+
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer consumer.Close()
+
+    // Consume!
+    for {
+        select {
+        case msg := <-consumer.Messages():
+            consumer.MarkOffset(msg, "")
+            // TODO: do something with msg.Value in a goroutine. 
+            // TODO2: Consider limiting number of goroutines with waitgroup
+        case err := <-consumer.Errors():
+            log.Println("Failed to consume message: ", err)
+        }
+    }
+
 * Cassandra Connect in Go
 
+        cluster := gocql.NewCluster("localhost:9042")
+        cluster.Keyspace = "test"
+        // connect to the cluster
+        session, err := cluster.CreateSession()
+        if err != nil {
+            log.Fatal(err)
+        }
+        defer session.Close()
+
+        ctx := context.Background()
+
+        // insert a tweet
+        if err := session.Query(`INSERT INTO tweet (timeline, id, text) VALUES (?, ?, ?)`,
+            "me", gocql.TimeUUID(), "hello world").WithContext(ctx).Exec(); err != nil {
+            log.Fatal(err)
+        }
+
 * Run Producer CLI
+
+    | => docker-compose exec kafka bash
+    bash-4.4# 
 
 * Links
