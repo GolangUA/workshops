@@ -280,16 +280,16 @@ Create custom type example
     jsonMsg := "{}" // your Marshalled message here
 
     msg := sarama.ProducerMessage{
-		Topic: "test",
-		Value: sarama.ByteEncoder(jsonMsg),
-	}
+        Topic: "test",
+        Value: sarama.ByteEncoder(jsonMsg),
+    }
 
-	partition, offset, err := producer.SendMessage(&msg)
-	if err != nil {
-		log.Fatal(err)
-	} else {
-		fmt.Println("Sent msg to partition:", partition, ", offset:", offset)
-	}
+    partition, offset, err := producer.SendMessage(&msg)
+    if err != nil {
+        log.Fatal(err)
+    } else {
+        fmt.Println("Sent msg to partition:", partition, ", offset:", offset)
+    }
 
 * Links
 
