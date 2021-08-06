@@ -100,6 +100,21 @@ is Cassandra Query Language with SQL-like syntax
 *
 .image talk/images/data-model.png
 
+* Examples of consistency levels (there are more):
+
+*ONE* – Only a single replica must respond.
+
+*TWO* – Two replicas must respond.
+
+*THREE* – Three replicas must respond.
+
+*QUORUM* – A majority (n/2 + 1) of the replicas must respond.
+
+*ALL* – All of the replicas must respond.
+
+*LOCAL_QUORUM* – A majority of the replicas in the local datacenter (whichever datacenter the coordinator is in) must respond.
+
+
 * Homework
 
 Using all just learned, write any data (4-5 fields, KISS) pipeline you want using next approach
@@ -244,9 +259,42 @@ Create custom type example
             log.Fatal(err)
         }
 
-* Run Producer CLI
+* Producer Connect Example
 
-    | => docker-compose exec kafka bash
-    bash-4.4# 
+    var producer sarama.SyncProducer
+	brokers := []string{"localhost:9092"}
+	сonfig := sarama.NewConfig()
+	сonfig.Producer.Return.Successes = true
+	producer, err := sarama.NewSyncProducer(brokers, сonfig)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "error connecting to Kafka brokers: %s\n", err)
+		os.Exit(1)
+	}
+
+	defer func() {
+		producer.Close()
+	}()
+
+* Producer Send Message Example
+
+    jsonMsg := "{}" // your Marshalled message here
+
+    msg := sarama.ProducerMessage{
+		Topic: "test",
+		Value: sarama.ByteEncoder(jsonMsg),
+	}
+
+	partition, offset, err := producer.SendMessage(&msg)
+	if err != nil {
+		log.Fatal(err)
+	} else {
+		fmt.Println("Sent msg to partition:", partition, ", offset:", offset)
+	}
 
 * Links
+
+[[https://confluence.softserveinc.com/pages/viewpage.action?pageId=263915098][Cassandra (Why you should read user manual?!)]]
+[[https://cassandra.apache.org/doc/latest/][Cassandra docs]]
+[[https://kafka.apache.org/documentation/][Kafka docs]]
+[[https://github.com/Shopify/sarama]]
+[[https://github.com/gocql/gocql]]
