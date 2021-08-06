@@ -10,7 +10,7 @@ Anastasiia Skliar
 - Cassandra and how to use it
 - Homework
 
-*
+* 
 .image talk/images/distributed-system.jpeg
 
 * Kafka
@@ -30,7 +30,7 @@ Kafka architecture has 4 actors. These are;
 - Producer
 - Consumer
 
-*
+* 
 .image talk/images/kafka.png
 
 * How to Write Data to Apache Kafka?
