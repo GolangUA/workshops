@@ -1,0 +1,306 @@
+Data pipeline
+Kafka + Cassandra + Go
+
+
+Anastasiia Skliar
+
+* Agenda
+- Kafka and how to use it
+- NoSQL basic knowledge
+- Cassandra and how to use it
+- Homework
+
+
+* Distributed systems
+.image talk/images/distributed-system.jpeg
+
+* Kafka
+Apache Kafka is an open-source distributed event streaming platform used by thousands of companies for high-performance data pipelines, streaming analytics, data integration, and mission-critical applications.
+
+Some of Kafka’s features are;
+- Stream Processing Platform
+- Open Source Software
+- Distributed System
+- Fully Scalable
+- High Performance - Low Latency
+
+* Architecture of Apache Kafka
+Kafka architecture has 4 actors. These are;
+- Broker
+- Zookeeper
+- Producer
+- Consumer
+
+
+* Kafka
+.image talk/images/kafka.png
+
+* How to Write Data to Apache Kafka?
+Apache Kafka stores data using Topic. Each Topic has its own name. Topics are stored on Brokers.
+There are Partitions in Topics. So Topic is a structure consisting of Partitions. Data is actually written to any partition in Topics. We can decide to determine the number of Partitions for each Topic.
+Partition actually uses the Log principle. That is, data is constantly added to the back. We cannot add a beginning or middle of the partition. 
+
+* Leader Partition Election
+One of the replication copies of each Partition is assigned as the Leader Partition. Data is always written to these Leader Partitions. Then these Leader Partitions provide synchronization by sending the data to other copies. If a Leader Partition crashes, one of the duplicates is assigned as Leader by Kafka.
+
+* Producer Acknowledgement
+acks = 0 → The fastest but most risky method. Data is sent to Kafka, it continues without waiting for an answer.
+acks = 1 → Medium fast, considered safe. The data is sent to Kafka, it waits until the data is written to the Leader Partition, then continues.
+acks = 2 → The slowest, safest method. Data is sent to Kafka, data is written to Leader Partitions after Leader Partition writes to other copies, the system continues.
+
+* Information Reading Strategies from Kafka
+Data can be read with 3 different strategies.
+
+*At*most*once*: There is a high risk of messages being lost. Read, Commit, Process, and Save to Database steps are applied respectively.
+
+*At*least*once*: It is the most preferred strategy. We make sure that we process the message without errors. Read, Process, Save to Database and Commit steps are applied respectively.
+
+*Exactly*once*: The incoming message is held in a Transaction. The message will not disappear even if there is any break in the process. But this method has a huge impact on performance. It should be used only when necessary. Read, Transaction, and Commit steps are applied respectively.
+
+* Zookeeper
+
+Zookeeper is open-source software cluster coordinator. Kafka uses Zookeeper to manage all Brokers. The data sent is never stored here. Zookeeper’s responsibilities are:
+- Coordinating brokers.
+- Choosing the Leader Partition.
+- To ensure that brokers get to know each other.
+- Discovering new or deleted Brokers or newly added, changed Topics.
+
+.image talk/images/Apache_ZooKeeper.png
+
+* NoSQL
+A NoSQL database (Not Only SQL) is a database that provides a mechanism to store and retrieve data other than the tabular relations used in relational databases. These databases are schema-free, support easy replication, have simple API, eventually consistent, and can handle huge amounts of data.
+
+.image talk/images/nosql.png
+
+* 
+CAP theorem states that is impossible for a distributed data store to offer more than two out of three
+- Consistency
+- Availability
+- Partition Tolerance
+
+.image talk/images/base.png
+
+* Apache Cassandra
+
+A distributed NoSQL database system for managing large amounts of structured data across many commodity servers, while providing highly available service and no single point of failure.
+
+.image talk/images/Cassandra-logo.png
+
+* CQL
+is Cassandra Query Language with SQL-like syntax
+
+.image talk/images/cql.png
+
+* Everything is upsert in Cassandra
+
+.image talk/images/upsert.png
+
+* DDL
+
+.image talk/images/ddl.png
+
+* Data model
+.image talk/images/data-model.png
+
+* Examples of consistency levels (there are more):
+
+*ONE* – Only a single replica must respond.
+
+*TWO* – Two replicas must respond.
+
+*THREE* – Three replicas must respond.
+
+*QUORUM* – A majority (n/2 + 1) of the replicas must respond.
+
+*ALL* – All of the replicas must respond.
+
+*LOCAL_QUORUM* – A majority of the replicas in the local datacenter (whichever datacenter the coordinator is in) must respond.
+
+
+* Homework
+
+Using all just learned, write any data (4-5 fields, KISS) pipeline you want using next approach
+1. Receive data (Kafka)
+2. Validate and process data (Go)
+3. Save data to persistant storage (Cassandra)
+4. Query data from cli (CQLSH)
+
+Some ideas of data:
+Tweets, News, Posts
+
+* docker-compose - DEMO TIME
+
+.code docker-compose.yml
+
+*
+    | => docker-compose up -d
+    Creating data-pipeline_zookeeper_1 ... done
+    Creating data-pipeline_cassandra_1 ... done
+    Creating data-pipeline_kafka_1     ... done
+
+
+* connect to docker cqlsh
+    | => docker-compose exec cassandra cqlsh
+    Connected to Test Cluster at 127.0.0.1:9042.
+    [cqlsh 5.0.1 | Cassandra 3.10 | CQL spec 3.4.4 | Native protocol v4]
+    Use HELP for help.
+    cqlsh> SELECT * FROM system_schema.keyspaces ;
+
+    keyspace_name      | durable_writes | replication
+    --------------------+----------------+-------------------------------------------------------------------------------------
+            system_auth |           True | {'class': 'org.apache.cassandra.locator.SimpleStrategy', 'replication_factor': '1'}
+        system_schema |           True |                             {'class': 'org.apache.cassandra.locator.LocalStrategy'}
+    system_distributed |           True | {'class': 'org.apache.cassandra.locator.SimpleStrategy', 'replication_factor': '3'}
+                system |           True |                             {'class': 'org.apache.cassandra.locator.LocalStrategy'}
+        system_traces |           True | {'class': 'org.apache.cassandra.locator.SimpleStrategy', 'replication_factor': '2'}
+
+    (5 rows)
+
+* Create keyspace
+
+    cqlsh> CREATE KEYSPACE IF NOT EXISTS test
+    WITH REPLICATION = {
+        'class': 'SimpleStrategy',
+        'replication_factor': '1'}
+    AND DURABLE_WRITES = true;
+    cqlsh> use test;
+
+Create custom type example
+
+    cqlsh> CREATE TYPE payload (
+        "Name" text,
+        "Value" text
+    );
+*
+    cqlsh:test>CREATE TABLE example(
+        "ID" text,
+        "Bigint" Bigint,
+        "Blob" Blob, 
+        "Boolean" Boolean,
+        "Date" Date,
+        "Decimal" Decimal,
+        "Double" Double,
+        "Float" Float,
+        "Int" Int, 
+        "SmallInt" SmallInt, 
+        "Time" Time, 
+        "TimeStamp" TimeStamp,
+        "TimeUuid" TimeUuid,
+        "TinyInt" TinyInt,
+        "Varchar" Varchar,
+        "Uuid" Uuid,
+        "Inet" Inet,
+        "List" List<text>,
+        "Map" Map<text, int>,
+        "Set" Set<text>,
+        "Tuple" Tuple<int, int>,
+        "Varint" Varint,
+        "Custom" frozen<payload>,
+        PRIMARY KEY ("ID")
+    );
+
+* Consumer Example in Go
+
+    import sarama_cluster "github.com/bsm/sarama-cluster"
+
+    ...
+
+    kafConfig := sarama_cluster.NewConfig()
+    kafConfig.ClientID = "go_test"
+    kafConfig.Consumer.Return.Errors = true
+    kafConfig.Consumer.Offsets.Initial = sarama.OffsetOldest
+
+    addrs := []string{"localhost:9092"}
+    kafClient, err := sarama_cluster.NewClient(addrs, kafConfig)
+
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    // Validate Config.
+    err = kafConfig.Validate()
+
+    if err != nil {
+        log.Fatal(err)
+    }
+
+* 
+    // Create consumer.
+    var topics = []string{"go_test"}
+    consumer, err := sarama_cluster.NewConsumerFromClient(kafClient, "go_test", topics)
+
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer consumer.Close()
+
+    // Consume!
+    for {
+        select {
+        case msg := <-consumer.Messages():
+            consumer.MarkOffset(msg, "")
+            // TODO: do something with msg.Value in a goroutine. 
+            // TODO2: Consider limiting number of goroutines with waitgroup
+        case err := <-consumer.Errors():
+            log.Println("Failed to consume message: ", err)
+        }
+    }
+
+* Cassandra Connect in Go
+
+        cluster := gocql.NewCluster("localhost:9042")
+        cluster.Keyspace = "test"
+        // connect to the cluster
+        session, err := cluster.CreateSession()
+        if err != nil {
+            log.Fatal(err)
+        }
+        defer session.Close()
+
+        ctx := context.Background()
+
+        // insert a tweet
+        if err := session.Query(`INSERT INTO tweet (timeline, id, text) VALUES (?, ?, ?)`,
+            "me", gocql.TimeUUID(), "hello world").WithContext(ctx).Exec(); err != nil {
+            log.Fatal(err)
+        }
+
+* Producer Connect Example
+
+    var producer sarama.SyncProducer
+	brokers := []string{"localhost:9092"}
+	сonfig := sarama.NewConfig()
+	сonfig.Producer.Return.Successes = true
+	producer, err := sarama.NewSyncProducer(brokers, сonfig)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "error connecting to Kafka brokers: %s\n", err)
+		os.Exit(1)
+	}
+
+	defer func() {
+		producer.Close()
+	}()
+
+* Producer Send Message Example
+
+    jsonMsg := "{}" // your Marshalled message here
+
+    msg := sarama.ProducerMessage{
+        Topic: "test",
+        Value: sarama.ByteEncoder(jsonMsg),
+    }
+
+    partition, offset, err := producer.SendMessage(&msg)
+    if err != nil {
+        log.Fatal(err)
+    } else {
+        fmt.Println("Sent msg to partition:", partition, ", offset:", offset)
+    }
+
+* Links
+
+[[https://confluence.softserveinc.com/pages/viewpage.action?pageId=263915098][Cassandra (Why you should read user manual?!)]]
+[[https://cassandra.apache.org/doc/latest/][Cassandra docs]]
+[[https://kafka.apache.org/documentation/][Kafka docs]]
+[[https://github.com/Shopify/sarama]]
+[[https://github.com/gocql/gocql]]
