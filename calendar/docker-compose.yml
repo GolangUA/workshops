@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+    db:
+        image: postgres:alpine
+        ports:
+            - "5432:5432"
+        volumes:
+            - ./initdb.d:/docker-entrypoint-initdb.d/
+            - database-data:/var/lib/postgresql/data/
+        environment:
+            POSTGRES_DB: gotest
+            POSTGRES_UESR: gouser
+            POSTGRES_PASSWORD: gopassword
+
+
+volumes:
+  database-data:
