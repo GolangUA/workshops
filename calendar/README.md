@@ -12,6 +12,236 @@ Create a service that will store client events (title, description, point of tim
 * PUT update an event (title, description, data & time, timezone, duration, notes), 
 * DELETE delete event.
 
+```yaml
+swagger: "3.9"
+info:
+  title: Calendar
+  version: '1.0'
+  description: Simple event calendar server
+  license:
+    name: Open license
+host: 'localhost:5000'
+basePath: "/"
+tags:
+  - name: auth
+    description: Basic auth operations
+  - name: user
+    description: Basic user operations
+  - name: events
+    description: Basic events operations 
+  - name: event
+    description: Basic event operations
+schemas: "http"
+paths:
+  /login:
+    post:
+      tags:
+       - auth
+      summary: Logs user into the system
+      description: ''
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Auth form data as json
+          required: true
+          schema:
+            $ref: '#/definitions/Auth'
+      responses:
+        '200':
+          description: Successfully saved"
+
+  /logout:
+    get:
+      tags:
+        - auth
+      summary: Logs out current logged in user session
+      description: ''
+      operationId: logoutUser
+      produces:
+        - text/plain
+      parameters: []
+      responses:
+        default:
+          description: successful loged out
+
+  /api/user:
+    put:
+      tags: 
+       - user
+      summary: Update user's timezone
+      description: 'This operation can be done only for loged in users'
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: User's timezone data
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+       '401':
+          description: Unathorized access
+       '200':
+          description: Successfully saved
+
+  /api/events:
+    get:
+      tags: 
+       - events
+      summary: Get events
+      description: 'This operation can be done only for loged in users'
+      consumes:
+        - application/json
+      parameters:
+        - name: title
+          in: query
+          description: The title of the event
+          required: false
+          type: string
+          default: birthday
+        - name: timezone
+          in: query
+          description: The timezone of events
+          required: false
+          type: string
+          default: Europe/Riga
+        - name: dateFrom
+          in: query
+          description: Events must be after or on this date
+          required: false
+          type: string
+          format: date
+          default: '2021-09-01'
+        - name: dateTo
+          in: query
+          description: Events must be before this date
+          required: false
+          type: string
+          format: date
+          default: '2021-09-01'
+        - name: timeFrom
+          in: query
+          description: Events must be after or on this time
+          required: false
+          type: string
+          format: time
+          default: 08:00
+        - name: timeTo
+          in: query
+          description: Events must be before this time
+          required: false
+          type: string
+          format: time
+          default: 10:00
+      responses:
+       '401':
+          description: Unathorized access
+       '200':
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Event'
+    post:
+      tags: 
+       - event
+      summary: Create event
+      description: 'This operation can be done only for loged in users'
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Created event object
+          required: true
+          schema:
+            $ref: '#/definitions/Event'
+      responses:
+       '401':
+          description: Unathorized access
+       '201':
+          description: Successfully saved
+
+  /api/event/{id}:
+    get:
+      tags: 
+       - event
+      summary: Get event by id
+      description: 'This operation can be done only for loged in users'
+      parameters:
+        - name: id
+          in: path
+          description: 'Event ID'
+          required: true
+          type: integer
+          default: 1
+      responses:
+       '401':
+          description: Unathorized access
+       '200':
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/Event'
+    put:
+      tags:
+        - event
+      summary: Update event
+      description: 'This operation can be done only for loged in users'
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Updated event object
+          required: true
+          schema:
+            $ref: '#/definitions/Event'
+      responses:
+        '401':
+          description: Unathorized access
+        '201':
+          description: Successfully saved
+definitions:
+  Auth:
+    type: object
+    properties:
+      Username:
+        type: string
+      Password:
+        type: string 
+  User:
+    type: object
+    properties:
+      login:
+        type: string
+      timezone:
+        type: string       
+        
+  Event:
+    type: object
+    properties: 
+      id: 
+        type: string
+      title:
+        type: string
+      description:
+        type: string
+      time:
+        type: string
+      timezone:
+        type: string
+      duration:
+        type: integer
+        format: int32
+      notes:
+        type: array
+        items: 
+          type: string
+```
+
 ### Hints
 
 * Start from utilizing standard packages: `net/http`; 
@@ -22,6 +252,24 @@ Create a service that will store client events (title, description, point of tim
 * Fineout how to convert & store time between different timezones with package `time`;
 * All data should be stored in memory;
 * Use Postman to validate your server;
+* Use [is](https://github.com/matryer/is) and [moq](https://github.com/matryer/moq) in tests;
+
+```go
+package main
+
+import "fmt"
+import "time"
+
+func main() {
+	loc, err := time.LoadLocation("America/Chicago")
+	if err != nil {
+		panic(err)
+	}
+
+	t := time.Now().In(loc)
+	fmt.Println(t)
+}
+```
 
 ## 2. Serve multiple users
 
@@ -54,8 +302,8 @@ For preparing service to the production lunch it should have:
   - metrics: 
     - total number of events, 
     - number of users, 
-    - requests per seconds, 
-    - requests per seconds per user, 
+    - requests per second, 
+    - avg. requests per user per second, 
     - goroutines used, 
     - memory used, 
     - cpu used;
@@ -71,6 +319,7 @@ For preparing service to the production lunch it should have:
 - [structured logging](https://www.client9.com/structured-logging-in-golang/)
 - [logs for HTTP service](https://ribice.medium.com/http-logging-in-go-344e6fca057c)
 - [load testing with vegeta](https://geshan.com.np/blog/2020/09/vegeta-load-testing-primer-with-examples/)
+- [example of Prometheus metrics](https://prometheus.io/docs/guides/go-application)
 
 
 ## 4. Integration with DB
@@ -86,6 +335,16 @@ Add persistence layer. Now all information about events and user should be store
 
 ### Hint:
 - http://go-database-sql.org our friend
+- [use docker-compose for DB setup](https://medium.com/analytics-vidhya/getting-started-with-postgresql-using-docker-compose-34d6b808c47c)
+
+```sh
+docker-compose up -d db # for start DB, all initial queries should be in initdb.d folder
+docker-compose logs -f db #for reading logs 
+dc exec db /bin/sh # enter DB container
+psql --host=db --username=gouser --dbname=gotest # launch PG client
+psql -U postgres # as superuser, alternative variant
+
+```
 
 ## 5. Add gRPC
 
