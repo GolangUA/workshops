@@ -1,11 +1,3 @@
-//////////////////////////////////////////////////////////////////////
-//
-// Given is a producer-consumer szenario, where a producer reads in
-// tweets from a mockstream and a consumer is processing the
-// data. Your task is to change the code so that the producer as well
-// as the consumer can run concurrently
-//
-
 package main
 
 import (
@@ -19,18 +11,20 @@ func producer(stream Stream) (tweets []*Tweet) {
 		if err == ErrEOF {
 			return tweets
 		}
-
+		// TODO: use channel here
 		tweets = append(tweets, tweet)
 	}
 }
 
 func consumer(tweets []*Tweet) {
+	// TODO: use channel here
 	for _, t := range tweets {
 		if t.IsTalkingAboutGo() {
 			fmt.Println(t.Username, "\ttweets about golang")
-		} else {
-			fmt.Println(t.Username, "\tdoes not tweet about golang")
+			continue
 		}
+
+		fmt.Println(t.Username, "\tdoes not tweet about golang")
 	}
 }
 
@@ -38,9 +32,10 @@ func main() {
 	start := time.Now()
 	stream := GetMockStream()
 
+	// Modification starts from here
+	// Hint: this can be resolved via channels
 	// Producer
 	tweets := producer(stream)
-
 	// Consumer
 	consumer(tweets)
 

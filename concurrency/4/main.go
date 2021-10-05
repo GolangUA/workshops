@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -33,12 +34,18 @@ func main() {
 	ctx, cancel := context.WithCancel(context.TODO())
 	resultsCh := make(chan SiteData, len(sites))
 
-	// your code
+	// TODO your code
 
 	// give one second to validate if all other goroutines are closed
 	time.Sleep(time.Second)
 }
 
+// TODO implement function that will execute request function, will validate the output and cancel all other requests when needed page is found
+// and will listen to cancellation signal from context and will exit from the func when will receive it
+
+// TODO implement function that will perfrom request using the example under
+
+// TODO hint request function code:
 /*
 	Code to make request and read data
 

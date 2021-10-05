@@ -7,12 +7,15 @@ eventually run out of memory.
 
 Your task is to implement a session cleaner routine that runs
 concurrently in the background and cleans every session that
-hasn't been updated for more than 5 seconds (of course usually
-session times are much longer).
+hasn't been updated for more than 5 seconds.
 
 Note that we expect the session to be removed anytime between 5 and 7
 seconds after the last update. Also, note that you have to be very
 careful in order to prevent race conditions.
+
+You need to modify only main.go file.
+
+You may use mutexes here to prevent race conditions.
 
 ## Test your solution
 
