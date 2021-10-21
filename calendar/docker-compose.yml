@@ -10,7 +10,7 @@ services:
             - database-data:/var/lib/postgresql/data/
         environment:
             POSTGRES_DB: gotest
-            POSTGRES_UESR: gouser
+            POSTGRES_USER: gouser
             POSTGRES_PASSWORD: gopassword
 
 
