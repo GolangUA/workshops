@@ -1,0 +1,36 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Swagger Wallet",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host": "localhost",
+  "basePath": "/v2",
+  "tags": [
+    {
+      "name": "transaction",
+      "description": "Everything about your transactions"
+    },
+    {
+      "name": "wallet",
+      "description": "Operations about wallet"
+    },
+    {
+      "name": "user",
+      "description": "Operations about user"
+    },
+    {
+      "name": "rate",
+      "description": "Operations about rate"
+    }
+  ],
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "paths": null
+}
