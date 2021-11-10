@@ -7,4 +7,7 @@ The fee must be stored in the wallet with ID '1feeaddressasdasd123asd' from each
   * Transaction
   * Wallet
   * User
- 
+
+### Hints
+* Use abstract data structure such as Queue, Stacks for transactions;
+* Use JWT for authorization at other endpoints;

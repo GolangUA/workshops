@@ -70,14 +70,6 @@ create index if not exists transactions_debit_user_id_index
 create unique index if not exists transactions_id_uindex
     on transactions (id);
 
-create table if not exists rates
-(
-    id   bigserial        not null,
-    rate double precision not null,
-    constraint rates_pk
-    primary key (id)
-    );
-
 
 INSERT INTO users (id) VALUES (0);
 INSERT INTO wallets (address, balance, user_id) VALUES ('1feeaddressasdasd123asd', 0, 0);
