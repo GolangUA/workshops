@@ -35,6 +35,7 @@ That will help to learn more about Go language, basic construction, syntax, and 
 - [Calendar REST API](https://github.com/GolangUA/workshops/tree/master/calendar)
 - [Data pipeline](https://github.com/GolangUA/workshops/tree/master/data-pipeline) Kafka + Cassandra
 - [gRPC](https://github.com/GolangUA/workshops/tree/master/gRPC-presentation)
+- [High Performance Go Workshop](https://dave.cheney.net/high-performance-go-workshop/gophercon-2019.html)
 
 
 ## Practical tasks
@@ -42,4 +43,9 @@ That will help to learn more about Go language, basic construction, syntax, and 
 - [Reflect](https://github.com/GolangUA/workshops/tree/master/reflect)
 - [Concurrency](https://github.com/GolangUA/workshops/tree/master/concurrency)
 
+## Coding Style Guides
 
+- [Thanos Coding Style Guide](https://github.com/thanos-io/thanos/blob/main/docs/contributing/coding-style-guide.md)
+- [Uber Go Syle Guide](https://github.com/uber-go/guide/blob/master/style.md)
+- [Real world advice for writing maintainable Go programs](https://dave.cheney.net/practical-go/presentations/qcon-china.html)
+- [Style guideline for Go packages](https://rakyll.org/style-packages/)
