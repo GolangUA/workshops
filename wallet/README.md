@@ -7,7 +7,7 @@ Service has to provide good management of transactions in any currency between w
   * Wallet
   * User
 
-#Todo
+### Todo
 ###### level 1
 1. Implement authorization for user
 2. Create minimum 2 users 
@@ -30,4 +30,4 @@ $ git clone git@github.com:GolangUA/workshops.git
 $ cd wallet
 $ docker-compose up -d #for creating DB and API doc server
 ```
-**Note:** Please check API documentation [here](http://localhost:8080).
+**Note:** API documentation [here](http://localhost:8080).
