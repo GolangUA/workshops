@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+    db:
+        image: postgres:alpine
+        container_name: db_pg
+        hostname: pg
+        ports:
+            - "5432:5432"
+        volumes:
+            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+            - database-data:/var/lib/postgresql/data/
+        environment:
+            POSTGRES_DB: gotest
+            POSTGRES_USER: gouser
+            POSTGRES_PASSWORD: gopassword
+
+    swagger-ui:
+        image: swaggerapi/swagger-ui
+        container_name: swagger_ui_container
+        ports:
+            - "8080:8080"
+        volumes:
+            - ./swagger.json:/app/swagger.json
+
+volumes:
+  database-data:
