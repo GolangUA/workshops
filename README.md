@@ -33,6 +33,7 @@ That will help to learn more about Go language, basic construction, syntax, and 
 - [Whispering-gopher](https://github.com/campoy/whispering-gophers) distributed communication network 
 - [Pac Man](https://github.com/danicat/pacgo) cli, interaction with terminal, gamedev
 - [Calendar REST API](https://github.com/GolangUA/workshops/tree/master/calendar)
+- [Wallet REST API](https://github.com/GolangUA/workshops/tree/master/wallet)
 - [Data pipeline](https://github.com/GolangUA/workshops/tree/master/data-pipeline) Kafka + Cassandra
 - [gRPC](https://github.com/GolangUA/workshops/tree/master/gRPC-presentation)
 - [High Performance Go Workshop](https://dave.cheney.net/high-performance-go-workshop/gophercon-2019.html)
