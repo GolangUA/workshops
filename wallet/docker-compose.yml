@@ -8,7 +8,7 @@ services:
         ports:
             - "5432:5432"
         volumes:
-            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+            - ./migrations/000001_init.sql:/docker-entrypoint-initdb.d/init.sql
             - database-data:/var/lib/postgresql/data/
         environment:
             POSTGRES_DB: gotest
@@ -21,7 +21,7 @@ services:
         ports:
             - "8080:8080"
         volumes:
-            - ./swagger.json:/app/swagger.json
+            - ./api/swagger.json:/app/swagger.json
 
 volumes:
   database-data:
