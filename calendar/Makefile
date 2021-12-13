@@ -8,7 +8,7 @@ default: build
 
 build:
 	@ echo "-> build binary ..."
-	@ go build -ldflags "-X main.HashCommit=`git rev-parse HEAD` -X main.BuildStamp=`date -u '+%Y-%m-%d_%I:%M:%S%p'`" -o ./calendar .
+	@ go build -ldflags "-X main.HashCommit=`git rev-parse HEAD` -X main.BuildStamp=`date -u '+%Y-%m-%d_%I:%M:%S%p'`" -o ./calendar/cmd/server .
 .PHONY: build
 
 test:
