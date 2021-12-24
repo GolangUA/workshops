@@ -3,48 +3,36 @@ package main
 import (
 	"context"
 	"sync/atomic"
-	"time"
 )
 
 type DynamicWP struct {
 	// number of workers
-	min, max int
+	min, max           int
+	currentWorkerCount *int32
 }
 
 // fill the correct arguments
-func (w *DynamicWP) work(ctx context.Context, tasksCh chan func()) {
+func (w *DynamicWP) work(ctx context.Context, workerTasks chan func()) {
+	atomic.AddInt32(w.currentWorkerCount, 1)
+
 	// work should call the task function from task ch
+
+	// don't forget to implement graceful shutdown:
+	//case <-ctx.Done():
+	//			atomic.AddInt32(w.currentWorkerCount, -1)
+	//			return
+	//}
 }
 
+// Start starts dynamic worker pull logic
 func (w *DynamicWP) Start(ctx context.Context, tasksCh chan func()) {
 	// worker load logic
 }
 
 func NewDynamicWorkerPool(min, max int) *DynamicWP {
 	return &DynamicWP{
-		min: min,
-		max: max,
+		min:                min,
+		max:                max,
+		currentWorkerCount: new(int32),
 	}
-}
-
-func main() {
-	ctx, cancel := context.WithCancel(context.TODO())
-	wp := NewDynamicWorkerPool(3, 20)
-
-	tasksCh := make(chan func())
-	go wp.Start(ctx, tasksCh)
-
-	for i := 0; i < 100; i++ {
-		tasksCh <- TestLoad
-	}
-
-	cancel() // worker pool should be gracefully closed
-	time.Sleep(time.Second * 1)
-}
-
-var loadCount int32
-
-func TestLoad() {
-	atomic.AddInt32(&loadCount, 1)
-	time.Sleep(time.Second * 1)
 }
