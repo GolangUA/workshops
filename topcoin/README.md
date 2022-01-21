@@ -2,6 +2,8 @@
 
 ### Overview
 
+Ⓒ  Copied from [WATTxi code challenges](https://github.com/WATTx/code-challenges/blob/master/software-engineer-challenge-top-coins.md)
+
 For this task, you will prototype a price list service for top crypto assets.
 
 The service should expose a HTTP endpoint, which when fetched, displays an up-to-date list of top assets and their current prices in USD.
