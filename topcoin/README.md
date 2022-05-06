@@ -52,3 +52,13 @@ You're free to pick any pattern for inter-service communication. We ask you to e
 ### Hints
 
 - We recommend you use `docker` and `docker-compose` for orchestrating your solution.
+
+
+### Tasks 
+
+1. Create command line client for both API (top and score)
+    * parallel requests (you can specify how many routins and requests per threads from comman line)
+    * you can specify which API to request from command line
+    * routines have to return errors to main routin before error exit, and main routine print it to terminal
+    * pretty print or json output
+
