@@ -1,0 +1,7 @@
+db:
+  host: localhost
+  port: 5432
+  name: gotest
+  user: gouser
+  password: gopassword
+  sslmode: disable
