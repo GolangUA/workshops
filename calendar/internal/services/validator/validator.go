@@ -2,6 +2,7 @@ package validator
 
 import (
 	"fmt"
+	"github.com/Roma7-7-7/workshops/calendar/api"
 	"github.com/Roma7-7-7/workshops/calendar/internal/services/calendar"
 	"log"
 	"strings"
@@ -31,7 +32,7 @@ type CreateEvent struct {
 }
 
 type UpdateEvent struct {
-	Id          string   `json:"id"`
+	ID          string   `json:"id"`
 	Title       string   `json:"title"`
 	Description string   `json:"description"`
 	Time        string   `json:"time"`
@@ -43,7 +44,7 @@ type UpdateEvent struct {
 func (s *Service) Validate(v interface{}) error {
 	errors := make([]string, 0, 10)
 	switch t := v.(type) {
-	case GetEvents:
+	case *GetEvents:
 		if _, err := time.LoadLocation(t.Timezone); err != nil {
 			errors = append(errors, "timezone must be a valid timezone")
 		}
@@ -67,29 +68,30 @@ func (s *Service) Validate(v interface{}) error {
 				errors = append(errors, "both date_to and time_to should be present if timezone is specified")
 			}
 		}
-		if len(errors) > 0 {
-			return fmt.Errorf("validation errors: [%s]", strings.Join(errors, "; "))
-		}
-		return nil
-	case CreateEvent:
+	case *CreateEvent:
 		errors = validateEventModification(errors, t.Title, t.Time, t.Timezone, t.Duration)
-		if len(errors) > 0 {
-			return fmt.Errorf("validation errors: [%s]", strings.Join(errors, "; "))
-		}
-		return nil
-	case UpdateEvent:
-		if strings.TrimSpace(t.Id) == "" {
+	case *UpdateEvent:
+		if strings.TrimSpace(t.ID) == "" {
 			errors = append(errors, "id must not be blank")
 		}
 		errors = validateEventModification(errors, t.Title, t.Time, t.Timezone, t.Duration)
-		if len(errors) > 0 {
-			return fmt.Errorf("validation errors: [%s]", strings.Join(errors, "; "))
+	case *api.UserTimezone:
+		if strings.TrimSpace(t.Username) == "" {
+			errors = append(errors, "username must not be blank")
 		}
-		return nil
+		if strings.TrimSpace(t.Timezone) == "" {
+			errors = append(errors, "timezone must not be blank")
+		} else if _, err := time.LoadLocation(t.Timezone); err != nil {
+			errors = append(errors, "timezone must be a valid timezone")
+		}
 	default:
 		log.Printf("Validation of type %T is not supported\n", t)
 		return nil
 	}
+	if len(errors) > 0 {
+		return fmt.Errorf("validation errors: [%s]", strings.Join(errors, "; "))
+	}
+	return nil
 }
 
 func validateEventModification(errors []string, title, timeVal, timezone string, duration int) []string {

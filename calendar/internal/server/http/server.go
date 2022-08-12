@@ -1,46 +1,41 @@
 package http
 
 import (
-	"fmt"
-	"github.com/Roma7-7-7/workshops/calendar/internal/services/calendar"
+	"github.com/Roma7-7-7/workshops/calendar/internal/models"
 	"github.com/gin-gonic/gin"
-	"net/http"
+	"time"
 )
 
 type Validator interface {
 	Validate(interface{}) error
 }
 
-type Server struct {
-	service *calendar.Service
-	valid   Validator
+type Service interface {
+	GetEvents(username, title, dateFrom, timeFrom, dateTo, timeTo, timezone string) ([]*models.Event, error)
+	GetEvent(id string) (*models.Event, error)
+	GetEventOwner(id string) (string, error)
+	CreateEvent(username string, title, description, timeVal, timezone string, duration time.Duration, notes []string) (*models.Event, error)
+	UpdateEvent(id, title, description, timeVal, timezone string, duration time.Duration, notes []string) (*models.Event, error)
+	DeleteEvent(id string) (bool, error)
+	UpdateUserTimezone(username, timezone string) (*models.User, error)
 }
 
-func NewServer(service *calendar.Service, valid Validator) *Server {
+type Auth interface {
+	Login(c *gin.Context)
+	Logout(c *gin.Context)
+	Validate(c *gin.Context)
+}
+
+type Server struct {
+	service Service
+	valid   Validator
+	auth    Auth
+}
+
+func NewServer(service Service, valid Validator, auth Auth) *Server {
 	return &Server{
 		service: service,
 		valid:   valid,
+		auth:    auth,
 	}
-}
-
-type GenericResponse struct {
-	Message string
-}
-
-func badRequest(c *gin.Context, err error) {
-	c.JSON(http.StatusBadRequest, GenericResponse{
-		Message: err.Error(),
-	})
-}
-
-func notFound(c *gin.Context, entity string) {
-	c.JSON(http.StatusNotFound, GenericResponse{
-		Message: fmt.Sprintf("%s not found", entity),
-	})
-}
-
-func serverError(c *gin.Context, err error) {
-	c.JSON(http.StatusInternalServerError, GenericResponse{
-		Message: err.Error(),
-	})
 }

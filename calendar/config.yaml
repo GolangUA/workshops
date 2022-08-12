@@ -5,3 +5,7 @@ db:
   user: gouser
   password: gopassword
   sslmode: disable
+bcrypt:
+  secret: secret
+jwt:
+  secret: secret

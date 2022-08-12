@@ -1,6 +1,6 @@
 create table event
 (
-    id             varchar(36)              not null,
+    id             varchar(36)              not null primary key,
     title          varchar(256)             not null,
     description    text,
     timestamp_from timestamp with time zone not null,

@@ -11,7 +11,12 @@ func TestApplication_DSN_defaultValues(t *testing.T) {
 	defer func() {
 		configBytes = original
 	}()
-	configBytes = func() []byte { return []byte("") }
+	configBytes = func() []byte {
+		return []byte(`bcrypt:
+  secret: secret
+jwt:
+  secret: secret`)
+	}
 
 	initApplicationConfig()
 	assert.Equal(t, "host=localhost port=5432 user=gouser password=gopassword dbname=gotest", GetConfig().DSN())
@@ -23,13 +28,17 @@ func TestApplication_DSN_parsed(t *testing.T) {
 		configBytes = original
 	}()
 	configBytes = func() []byte {
-		return []byte(`db:
+		return []byte((`db:
   host: 127.0.0.1
   port: 2345
   name: db
   user: user
   password: password
-  sslmode: other`)
+  sslmode: other
+bcrypt:
+  secret: bcrypt_secret
+jwt:
+  secret: jwt_secret`))
 	}
 
 	initApplicationConfig()
@@ -41,7 +50,12 @@ func TestApplication_DSN_overridable(t *testing.T) {
 	defer func() {
 		configBytes = original
 	}()
-	configBytes = func() []byte { return []byte("") }
+	configBytes = func() []byte {
+		return []byte(`bcrypt:
+  secret: bcrypt_secret
+jwt:
+  secret: jwt_secret`)
+	}
 
 	type override struct {
 		env      string
@@ -62,6 +76,18 @@ func TestApplication_DSN_overridable(t *testing.T) {
 		os.Setenv(o.env, o.value)
 		initApplicationConfig()
 		assert.Equalf(t, o.expected, instance.DSN(), "%s does not override application config", o.env)
+		assert.Equal(t, "bcrypt_secret", instance.BCrypt.Secret)
+		assert.Equal(t, "jwt_secret", instance.JWT.Secret)
 		os.Unsetenv(o.env)
 	}
+
+	os.Setenv("BCRYPT_SECRET", "overridden")
+	initApplicationConfig()
+	assert.Equalf(t, "overridden", instance.BCrypt.Secret, "BCRYPT_SECRET does not override application config")
+	os.Unsetenv("BCRYPT_SECRET")
+
+	os.Setenv("JWT_SECRET", "overridden")
+	initApplicationConfig()
+	assert.Equalf(t, "overridden", instance.JWT.Secret, "JWT_SECRET does not override application config")
+	os.Unsetenv("JWT_SECRET")
 }

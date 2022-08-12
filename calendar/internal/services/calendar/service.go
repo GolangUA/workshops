@@ -11,12 +11,18 @@ const DateLayout = "2006-01-02"
 const TimeLayout = "15:04"
 
 type Repository interface {
-	GetEvents(title, dateFrom, timeFrom, dateTo, timeTo string) ([]*models.Event, error)
+	// Events
+	GetEvents(username, title, dateFrom, timeFrom, dateTo, timeTo string) ([]*models.Event, error)
 	GetEvent(id string) (*models.Event, error)
-	Exists(id string) (bool, error)
-	CreateEvent(title, description string, from time.Time, to time.Time, notes []string) (*models.Event, error)
+	EventExists(id string) (bool, error)
+	CreateEvent(username string, title, description string, from time.Time, to time.Time, notes []string) (*models.Event, error)
 	UpdateEvent(id, title, description string, from time.Time, to time.Time, notes []string) (*models.Event, error)
 	DeleteEvent(id string) (bool, error)
+	// Users
+	GetUser(username string) (*models.User, error)
+	UpdateUserTimezone(username, timezone string) (*models.User, error)
+	// User's event
+	GetEventOwner(eventId string) (string, error)
 }
 
 // Service holds calendar business logic and works with repository
@@ -28,42 +34,75 @@ func NewService(repo Repository) *Service {
 	return &Service{repo: repo}
 }
 
-func (s *Service) GetEvents(title, dateFrom, timeFrom, dateTo, timeTo, timezone string) ([]*models.Event, error) {
-	if timezone != "" {
-		if dateFrom != "" {
-			convertedDate, convertedTime, err := normalizeDateTime(dateFrom, timeFrom, timezone)
-			if err != nil {
-				return nil, fmt.Errorf("convert date=\"%s\" time=\"%s\" to timezone=\"%s\": %v", dateFrom, timeFrom, timezone, err)
-			}
-			dateFrom = convertedDate
-			timeFrom = convertedTime
+func (s *Service) GetEvents(username, title, dateFrom, timeFrom, dateTo, timeTo, timezone string) ([]*models.Event, error) {
+	user, err := s.repo.GetUser(username)
+	if err != nil {
+		return nil, err
+	}
+	userTimezone := user.Timezone
+
+	if timezone == "" {
+		timezone = userTimezone
+	}
+
+	if dateFrom != "" {
+		if timeFrom == "" {
+			timeFrom = "00:00"
 		}
-		if dateTo != "" {
-			convertedDate, convertedTime, err := normalizeDateTime(dateTo, timeTo, timezone)
-			if err != nil {
-				return nil, fmt.Errorf("convert date=\"%s\" time=\"%s\" to timezone=\"%s\": %v", dateTo, timeTo, timezone, err)
-			}
-			dateTo = convertedDate
-			timeTo = convertedTime
+		convertedDate, convertedTime, err := normalizeDateTime(dateFrom, timeFrom, timezone)
+		if err != nil {
+			return nil, fmt.Errorf("convert date=\"%s\" time=\"%s\" to timezone=\"%s\": %v", dateFrom, timeFrom, timezone, err)
+		}
+		dateFrom = convertedDate
+		timeFrom = convertedTime
+	}
+	if dateTo != "" {
+		if timeTo == "" {
+			timeTo = "23:59"
+		}
+		convertedDate, convertedTime, err := normalizeDateTime(dateTo, timeTo, timezone)
+		if err != nil {
+			return nil, fmt.Errorf("convert date=\"%s\" time=\"%s\" to timezone=\"%s\": %v", dateTo, timeTo, timezone, err)
+		}
+		dateTo = convertedDate
+		timeTo = convertedTime
+	}
+
+	events, err := s.repo.GetEvents(username, title, dateFrom, timeFrom, dateTo, timeTo)
+	if err != nil {
+		return nil, err
+	}
+
+	res := make([]*models.Event, 0, len(events))
+	for _, e := range events {
+		if conv, err := e.WithTimezone(userTimezone); err != nil {
+			return nil, fmt.Errorf("convert event with ID=\"%s\" to timezone=\"%s\": %v", e.ID, timezone, err)
+		} else {
+			res = append(res, conv)
 		}
 	}
-	return s.repo.GetEvents(title, dateFrom, timeFrom, dateTo, timeTo)
+
+	return res, err
 }
 
 func (s *Service) GetEvent(id string) (*models.Event, error) {
 	return s.repo.GetEvent(id)
 }
 
-func (s *Service) CreateEvent(title, description, timeVal, timezone string, duration time.Duration, notes []string) (*models.Event, error) {
+func (s *Service) GetEventOwner(id string) (string, error) {
+	return s.repo.GetEventOwner(id)
+}
+
+func (s *Service) CreateEvent(username string, title, description, timeVal, timezone string, duration time.Duration, notes []string) (*models.Event, error) {
 	timeFrom, timeTo, err := timeFromTo(timeVal, timezone, duration)
 	if err != nil {
 		return nil, err
 	}
-	return s.repo.CreateEvent(title, description, *timeFrom, *timeTo, notes)
+	return s.repo.CreateEvent(username, title, description, *timeFrom, *timeTo, notes)
 }
 
 func (s *Service) UpdateEvent(id, title, description, timeVal, timezone string, duration time.Duration, notes []string) (*models.Event, error) {
-	if ok, err := s.repo.Exists(id); err != nil {
+	if ok, err := s.repo.EventExists(id); err != nil {
 		return nil, err
 	} else if !ok {
 		return nil, nil
@@ -78,6 +117,10 @@ func (s *Service) UpdateEvent(id, title, description, timeVal, timezone string, 
 
 func (s *Service) DeleteEvent(id string) (bool, error) {
 	return s.repo.DeleteEvent(id)
+}
+
+func (s *Service) UpdateUserTimezone(username, timezone string) (*models.User, error) {
+	return s.repo.UpdateUserTimezone(username, timezone)
 }
 
 func timeFromTo(timeVal, timezone string, duration time.Duration) (*time.Time, *time.Time, error) {
@@ -96,7 +139,7 @@ func timeFromTo(timeVal, timezone string, duration time.Duration) (*time.Time, *
 	return &timeFrom, &timeTo, nil
 }
 
-var systemLocation = time.Local
+var dbLocation = time.Local
 
 func normalizeDateTime(date string, timev string, timezone string) (string, string, error) {
 	if date == "" && timev == "" {
@@ -117,7 +160,7 @@ func normalizeDateTime(date string, timev string, timezone string) (string, stri
 	if err != nil {
 		return "", "", fmt.Errorf("convert datetime=\"%s\": %v", dateTime, err)
 	}
-	converted := zoned.In(systemLocation)
+	converted := zoned.In(dbLocation)
 
 	return converted.Format(DateLayout), converted.Format(TimeLayout), nil
 }

@@ -10,7 +10,9 @@ import (
 
 // Application holds application configuration values
 type Application struct {
-	DB *Database `yaml:"db"`
+	DB     *Database `yaml:"db"`
+	BCrypt *BCrypt   `yaml:"bcrypt"`
+	JWT    *JWT      `json:"jwt"`
 }
 
 type Database struct {
@@ -20,6 +22,14 @@ type Database struct {
 	User     string `yaml:"user"`
 	Password string `yaml:"password"`
 	SSLMode  string `yaml:"sslmode"`
+}
+
+type BCrypt struct {
+	Secret string `yaml:"secret"`
+}
+
+type JWT struct {
+	Secret string `yaml:"secret"`
 }
 
 var instance *Application
@@ -32,7 +42,9 @@ func GetConfig() *Application {
 
 func initApplicationConfig() {
 	instance = &Application{
-		DB: &Database{},
+		DB:     &Database{},
+		BCrypt: &BCrypt{},
+		JWT:    &JWT{},
 	}
 
 	if err := yaml.Unmarshal(configBytes(), instance); err != nil {
@@ -45,6 +57,15 @@ func initApplicationConfig() {
 	overrideByEnv(&instance.DB.User, "DB_USER", "gouser")
 	overrideByEnv(&instance.DB.Password, "DB_PASSWORD", "gopassword")
 	overrideByEnv(&instance.DB.SSLMode, "DB_SSL_MODE", "")
+	overrideByEnv(&instance.BCrypt.Secret, "BCRYPT_SECRET", "")
+	overrideByEnv(&instance.JWT.Secret, "JWT_SECRET", "")
+
+	if instance.BCrypt.Secret == "" {
+		panic("bcrypt.secret must not be empty")
+	}
+	if instance.JWT.Secret == "" {
+		panic("jwt.secret must not be empty")
+	}
 }
 
 func (a *Application) DSN() string {
