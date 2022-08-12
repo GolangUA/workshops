@@ -2,9 +2,11 @@ package http
 
 import (
 	"github.com/Roma7-7-7/workshops/calendar/api"
+	"github.com/Roma7-7-7/workshops/calendar/internal/logging"
 	"github.com/Roma7-7-7/workshops/calendar/internal/middleware/auth"
 	"github.com/Roma7-7-7/workshops/calendar/internal/models"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"net/http"
 )
 
@@ -14,6 +16,7 @@ func (s *Server) UpdateUserTimezone(c *gin.Context) {
 		api.BadJSONA(c)
 		return
 	}
+	logging.Logger.Debug("update user timezone", zap.Any("payload", req))
 
 	if err := s.valid.Validate(&req); err != nil {
 		api.BadRequestA(c, err)

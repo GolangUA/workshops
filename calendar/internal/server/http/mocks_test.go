@@ -100,6 +100,12 @@ var _ Service = &ServiceMock{}
 // 			GetEventsFunc: func(username string, title string, dateFrom string, timeFrom string, dateTo string, timeTo string, timezone string) ([]*models.Event, error) {
 // 				panic("mock out the GetEvents method")
 // 			},
+// 			GetEventsCountFunc: func() (int, error) {
+// 				panic("mock out the GetEventsCount method")
+// 			},
+// 			GetUsersCountFunc: func() (int, error) {
+// 				panic("mock out the GetUsersCount method")
+// 			},
 // 			UpdateEventFunc: func(id string, title string, description string, timeVal string, timezone string, duration time.Duration, notes []string) (*models.Event, error) {
 // 				panic("mock out the UpdateEvent method")
 // 			},
@@ -127,6 +133,12 @@ type ServiceMock struct {
 
 	// GetEventsFunc mocks the GetEvents method.
 	GetEventsFunc func(username string, title string, dateFrom string, timeFrom string, dateTo string, timeTo string, timezone string) ([]*models.Event, error)
+
+	// GetEventsCountFunc mocks the GetEventsCount method.
+	GetEventsCountFunc func() (int, error)
+
+	// GetUsersCountFunc mocks the GetUsersCount method.
+	GetUsersCountFunc func() (int, error)
 
 	// UpdateEventFunc mocks the UpdateEvent method.
 	UpdateEventFunc func(id string, title string, description string, timeVal string, timezone string, duration time.Duration, notes []string) (*models.Event, error)
@@ -185,6 +197,12 @@ type ServiceMock struct {
 			// Timezone is the timezone argument value.
 			Timezone string
 		}
+		// GetEventsCount holds details about calls to the GetEventsCount method.
+		GetEventsCount []struct {
+		}
+		// GetUsersCount holds details about calls to the GetUsersCount method.
+		GetUsersCount []struct {
+		}
 		// UpdateEvent holds details about calls to the UpdateEvent method.
 		UpdateEvent []struct {
 			// ID is the id argument value.
@@ -215,6 +233,8 @@ type ServiceMock struct {
 	lockGetEvent           sync.RWMutex
 	lockGetEventOwner      sync.RWMutex
 	lockGetEvents          sync.RWMutex
+	lockGetEventsCount     sync.RWMutex
+	lockGetUsersCount      sync.RWMutex
 	lockUpdateEvent        sync.RWMutex
 	lockUpdateUserTimezone sync.RWMutex
 }
@@ -419,6 +439,58 @@ func (mock *ServiceMock) GetEventsCalls() []struct {
 	mock.lockGetEvents.RLock()
 	calls = mock.calls.GetEvents
 	mock.lockGetEvents.RUnlock()
+	return calls
+}
+
+// GetEventsCount calls GetEventsCountFunc.
+func (mock *ServiceMock) GetEventsCount() (int, error) {
+	if mock.GetEventsCountFunc == nil {
+		panic("ServiceMock.GetEventsCountFunc: method is nil but Service.GetEventsCount was just called")
+	}
+	callInfo := struct {
+	}{}
+	mock.lockGetEventsCount.Lock()
+	mock.calls.GetEventsCount = append(mock.calls.GetEventsCount, callInfo)
+	mock.lockGetEventsCount.Unlock()
+	return mock.GetEventsCountFunc()
+}
+
+// GetEventsCountCalls gets all the calls that were made to GetEventsCount.
+// Check the length with:
+//     len(mockedService.GetEventsCountCalls())
+func (mock *ServiceMock) GetEventsCountCalls() []struct {
+} {
+	var calls []struct {
+	}
+	mock.lockGetEventsCount.RLock()
+	calls = mock.calls.GetEventsCount
+	mock.lockGetEventsCount.RUnlock()
+	return calls
+}
+
+// GetUsersCount calls GetUsersCountFunc.
+func (mock *ServiceMock) GetUsersCount() (int, error) {
+	if mock.GetUsersCountFunc == nil {
+		panic("ServiceMock.GetUsersCountFunc: method is nil but Service.GetUsersCount was just called")
+	}
+	callInfo := struct {
+	}{}
+	mock.lockGetUsersCount.Lock()
+	mock.calls.GetUsersCount = append(mock.calls.GetUsersCount, callInfo)
+	mock.lockGetUsersCount.Unlock()
+	return mock.GetUsersCountFunc()
+}
+
+// GetUsersCountCalls gets all the calls that were made to GetUsersCount.
+// Check the length with:
+//     len(mockedService.GetUsersCountCalls())
+func (mock *ServiceMock) GetUsersCountCalls() []struct {
+} {
+	var calls []struct {
+	}
+	mock.lockGetUsersCount.RLock()
+	calls = mock.calls.GetUsersCount
+	mock.lockGetUsersCount.RUnlock()
 	return calls
 }
 

@@ -37,6 +37,20 @@ func (r *Repository) CreateUser(name string, password string, timezone string) (
 	return &user, nil
 }
 
+func (r *Repository) GetUsersCount() (int, error) {
+	var count int
+	err := psql.Select("count(*)").
+		From("users").
+		RunWith(r.db).
+		QueryRow().
+		Scan(&count)
+	if err != nil {
+		return 0, fmt.Errorf("get users count: %v", err)
+	}
+
+	return count, nil
+}
+
 func (r *Repository) UpdateUserTimezone(name string, timezone string) (*models.User, error) {
 	var user models.User
 	err := psql.Update("users").

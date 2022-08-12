@@ -3,8 +3,9 @@ package validator
 import (
 	"fmt"
 	"github.com/Roma7-7-7/workshops/calendar/api"
+	"github.com/Roma7-7-7/workshops/calendar/internal/logging"
 	"github.com/Roma7-7-7/workshops/calendar/internal/services/calendar"
-	"log"
+	"go.uber.org/zap"
 	"strings"
 	"time"
 )
@@ -85,7 +86,7 @@ func (s *Service) Validate(v interface{}) error {
 			errors = append(errors, "timezone must be a valid timezone")
 		}
 	default:
-		log.Printf("Validation of type %T is not supported\n", t)
+		logging.Logger.Warn("validation is not supported", zap.Any("type", t))
 		return nil
 	}
 	if len(errors) > 0 {

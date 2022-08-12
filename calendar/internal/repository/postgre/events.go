@@ -84,6 +84,14 @@ func (r *Repository) GetEvent(id string) (*models.Event, error) {
 	return &event, nil
 }
 
+func (r *Repository) GetEventsCount() (int, error) {
+	var count int
+	if err := psql.Select("COUNT(*)").From("event").RunWith(r.db).QueryRow().Scan(&count); err != nil {
+		return 0, fmt.Errorf("get events count: %v", err)
+	}
+	return count, nil
+}
+
 func (r *Repository) EventExists(id string) (bool, error) {
 	var count int
 	if err := psql.Select("COUNT(*)").From("event").Where(sq.Eq{"id": id}).RunWith(r.db).QueryRow().Scan(&count); err != nil {

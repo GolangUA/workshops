@@ -3,11 +3,13 @@ package auth
 import (
 	"fmt"
 	"github.com/Roma7-7-7/workshops/calendar/api"
+	"github.com/Roma7-7-7/workshops/calendar/internal/logging"
+	"github.com/Roma7-7-7/workshops/calendar/internal/middleware/metrics"
 	"github.com/Roma7-7-7/workshops/calendar/internal/services/calendar"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
+	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
-	"log"
 	"net/http"
 	"time"
 )
@@ -50,7 +52,7 @@ func (m *Middleware) Login(c *gin.Context) {
 	}
 	u, err := m.repo.GetUser(req.Username)
 	if err != nil {
-		log.Printf("get user: %v\n", err)
+		logging.Logger.Error("get user", zap.Error(err))
 		api.ServerErrorA(c, err)
 		return
 	}
@@ -62,7 +64,7 @@ func (m *Middleware) Login(c *gin.Context) {
 		api.UnauthorizedA(c, "password does not match")
 		return
 	} else if err != nil {
-		log.Printf("validate password: %v\n", err)
+		logging.Logger.Error("validate password", zap.Error(err))
 		api.ServerErrorA(c, err)
 		return
 	}
@@ -107,6 +109,7 @@ func (m *Middleware) Validate(c *gin.Context) {
 	c.Set(ContextKey, &Context{
 		JWT: cl,
 	})
+	metrics.IncRequest(cl.Subject)
 }
 
 func (m *Middleware) keyFunc(token *jwt.Token) (interface{}, error) {

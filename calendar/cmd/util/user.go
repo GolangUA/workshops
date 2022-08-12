@@ -4,9 +4,10 @@ import (
 	"flag"
 	"fmt"
 	"github.com/Roma7-7-7/workshops/calendar/internal/config"
+	"github.com/Roma7-7-7/workshops/calendar/internal/logging"
 	"github.com/Roma7-7-7/workshops/calendar/internal/repository/postgre"
+	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
-	"log"
 	"time"
 )
 
@@ -37,6 +38,6 @@ func main() {
 	if u, err := repo.CreateUser(*user, string(encrypted), *timezone); err != nil {
 		panic(err)
 	} else {
-		log.Println(*u)
+		logging.Logger.Info("user created", zap.Any("details", *u))
 	}
 }

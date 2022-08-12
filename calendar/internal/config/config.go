@@ -8,8 +8,13 @@ import (
 	"sync"
 )
 
+const (
+	DEV_ENV = "dev"
+)
+
 // Application holds application configuration values
 type Application struct {
+	Env    string    `yaml:"env"`
 	DB     *Database `yaml:"db"`
 	BCrypt *BCrypt   `yaml:"bcrypt"`
 	JWT    *JWT      `json:"jwt"`
@@ -51,6 +56,7 @@ func initApplicationConfig() {
 		panic(err)
 	}
 
+	overrideByEnv(&instance.Env, "ENV", "dev")
 	overrideByEnv(&instance.DB.Host, "DB_HOST", "localhost")
 	overrideByEnv(&instance.DB.Port, "DB_PORT", "5432")
 	overrideByEnv(&instance.DB.Name, "DB_NAME", "gotest")

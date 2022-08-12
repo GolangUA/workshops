@@ -37,8 +37,14 @@ var _ Repository = &RepositoryMock{}
 // 			GetEventsFunc: func(username string, title string, dateFrom string, timeFrom string, dateTo string, timeTo string) ([]*models.Event, error) {
 // 				panic("mock out the GetEvents method")
 // 			},
+// 			GetEventsCountFunc: func() (int, error) {
+// 				panic("mock out the GetEventsCount method")
+// 			},
 // 			GetUserFunc: func(username string) (*models.User, error) {
 // 				panic("mock out the GetUser method")
+// 			},
+// 			GetUsersCountFunc: func() (int, error) {
+// 				panic("mock out the GetUsersCount method")
 // 			},
 // 			UpdateEventFunc: func(id string, title string, description string, from time.Time, to time.Time, notes []string) (*models.Event, error) {
 // 				panic("mock out the UpdateEvent method")
@@ -71,8 +77,14 @@ type RepositoryMock struct {
 	// GetEventsFunc mocks the GetEvents method.
 	GetEventsFunc func(username string, title string, dateFrom string, timeFrom string, dateTo string, timeTo string) ([]*models.Event, error)
 
+	// GetEventsCountFunc mocks the GetEventsCount method.
+	GetEventsCountFunc func() (int, error)
+
 	// GetUserFunc mocks the GetUser method.
 	GetUserFunc func(username string) (*models.User, error)
+
+	// GetUsersCountFunc mocks the GetUsersCount method.
+	GetUsersCountFunc func() (int, error)
 
 	// UpdateEventFunc mocks the UpdateEvent method.
 	UpdateEventFunc func(id string, title string, description string, from time.Time, to time.Time, notes []string) (*models.Event, error)
@@ -132,10 +144,16 @@ type RepositoryMock struct {
 			// TimeTo is the timeTo argument value.
 			TimeTo string
 		}
+		// GetEventsCount holds details about calls to the GetEventsCount method.
+		GetEventsCount []struct {
+		}
 		// GetUser holds details about calls to the GetUser method.
 		GetUser []struct {
 			// Username is the username argument value.
 			Username string
+		}
+		// GetUsersCount holds details about calls to the GetUsersCount method.
+		GetUsersCount []struct {
 		}
 		// UpdateEvent holds details about calls to the UpdateEvent method.
 		UpdateEvent []struct {
@@ -166,7 +184,9 @@ type RepositoryMock struct {
 	lockGetEvent           sync.RWMutex
 	lockGetEventOwner      sync.RWMutex
 	lockGetEvents          sync.RWMutex
+	lockGetEventsCount     sync.RWMutex
 	lockGetUser            sync.RWMutex
+	lockGetUsersCount      sync.RWMutex
 	lockUpdateEvent        sync.RWMutex
 	lockUpdateUserTimezone sync.RWMutex
 }
@@ -397,6 +417,32 @@ func (mock *RepositoryMock) GetEventsCalls() []struct {
 	return calls
 }
 
+// GetEventsCount calls GetEventsCountFunc.
+func (mock *RepositoryMock) GetEventsCount() (int, error) {
+	if mock.GetEventsCountFunc == nil {
+		panic("RepositoryMock.GetEventsCountFunc: method is nil but Repository.GetEventsCount was just called")
+	}
+	callInfo := struct {
+	}{}
+	mock.lockGetEventsCount.Lock()
+	mock.calls.GetEventsCount = append(mock.calls.GetEventsCount, callInfo)
+	mock.lockGetEventsCount.Unlock()
+	return mock.GetEventsCountFunc()
+}
+
+// GetEventsCountCalls gets all the calls that were made to GetEventsCount.
+// Check the length with:
+//     len(mockedRepository.GetEventsCountCalls())
+func (mock *RepositoryMock) GetEventsCountCalls() []struct {
+} {
+	var calls []struct {
+	}
+	mock.lockGetEventsCount.RLock()
+	calls = mock.calls.GetEventsCount
+	mock.lockGetEventsCount.RUnlock()
+	return calls
+}
+
 // GetUser calls GetUserFunc.
 func (mock *RepositoryMock) GetUser(username string) (*models.User, error) {
 	if mock.GetUserFunc == nil {
@@ -425,6 +471,32 @@ func (mock *RepositoryMock) GetUserCalls() []struct {
 	mock.lockGetUser.RLock()
 	calls = mock.calls.GetUser
 	mock.lockGetUser.RUnlock()
+	return calls
+}
+
+// GetUsersCount calls GetUsersCountFunc.
+func (mock *RepositoryMock) GetUsersCount() (int, error) {
+	if mock.GetUsersCountFunc == nil {
+		panic("RepositoryMock.GetUsersCountFunc: method is nil but Repository.GetUsersCount was just called")
+	}
+	callInfo := struct {
+	}{}
+	mock.lockGetUsersCount.Lock()
+	mock.calls.GetUsersCount = append(mock.calls.GetUsersCount, callInfo)
+	mock.lockGetUsersCount.Unlock()
+	return mock.GetUsersCountFunc()
+}
+
+// GetUsersCountCalls gets all the calls that were made to GetUsersCount.
+// Check the length with:
+//     len(mockedRepository.GetUsersCountCalls())
+func (mock *RepositoryMock) GetUsersCountCalls() []struct {
+} {
+	var calls []struct {
+	}
+	mock.lockGetUsersCount.RLock()
+	calls = mock.calls.GetUsersCount
+	mock.lockGetUsersCount.RUnlock()
 	return calls
 }
 

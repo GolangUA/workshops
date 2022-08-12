@@ -14,12 +14,14 @@ type Repository interface {
 	// Events
 	GetEvents(username, title, dateFrom, timeFrom, dateTo, timeTo string) ([]*models.Event, error)
 	GetEvent(id string) (*models.Event, error)
+	GetEventsCount() (int, error)
 	EventExists(id string) (bool, error)
 	CreateEvent(username string, title, description string, from time.Time, to time.Time, notes []string) (*models.Event, error)
 	UpdateEvent(id, title, description string, from time.Time, to time.Time, notes []string) (*models.Event, error)
 	DeleteEvent(id string) (bool, error)
 	// Users
 	GetUser(username string) (*models.User, error)
+	GetUsersCount() (int, error)
 	UpdateUserTimezone(username, timezone string) (*models.User, error)
 	// User's event
 	GetEventOwner(eventId string) (string, error)
@@ -93,6 +95,10 @@ func (s *Service) GetEventOwner(id string) (string, error) {
 	return s.repo.GetEventOwner(id)
 }
 
+func (s *Service) GetEventsCount() (int, error) {
+	return s.repo.GetEventsCount()
+}
+
 func (s *Service) CreateEvent(username string, title, description, timeVal, timezone string, duration time.Duration, notes []string) (*models.Event, error) {
 	timeFrom, timeTo, err := timeFromTo(timeVal, timezone, duration)
 	if err != nil {
@@ -121,6 +127,10 @@ func (s *Service) DeleteEvent(id string) (bool, error) {
 
 func (s *Service) UpdateUserTimezone(username, timezone string) (*models.User, error) {
 	return s.repo.UpdateUserTimezone(username, timezone)
+}
+
+func (s *Service) GetUsersCount() (int, error) {
+	return s.repo.GetUsersCount()
 }
 
 func timeFromTo(timeVal, timezone string, duration time.Duration) (*time.Time, *time.Time, error) {

@@ -3,11 +3,12 @@ package http
 import (
 	"fmt"
 	"github.com/Roma7-7-7/workshops/calendar/api"
+	"github.com/Roma7-7-7/workshops/calendar/internal/logging"
 	"github.com/Roma7-7-7/workshops/calendar/internal/middleware/auth"
 	"github.com/Roma7-7-7/workshops/calendar/internal/models"
 	"github.com/Roma7-7-7/workshops/calendar/internal/services/validator"
 	"github.com/gin-gonic/gin"
-	"log"
+	"go.uber.org/zap"
 	"net/http"
 	"time"
 )
@@ -21,6 +22,7 @@ func (s *Server) GetEvents(c *gin.Context) {
 		DateTo:   c.Query("dateTo"),
 		TimeTo:   c.Query("timeTo"),
 	}
+	logging.Logger.Debug("get events", zap.Any("payload", req))
 	if err := s.valid.Validate(&req); err != nil {
 		api.BadRequestA(c, err)
 		return
@@ -31,7 +33,7 @@ func (s *Server) GetEvents(c *gin.Context) {
 
 	events, err := s.service.GetEvents(auth.GetContext(c).Username(), req.Title, req.DateFrom, req.TimeFrom, req.DateTo, req.TimeTo, req.Timezone)
 	if err != nil {
-		log.Printf("get events: %v\n", err)
+		logging.Logger.Error("get events", zap.Error(err))
 		api.ServerErrorA(c, err)
 		return
 	}
@@ -45,13 +47,14 @@ func (s *Server) GetEvents(c *gin.Context) {
 
 func (s *Server) GetEvent(c *gin.Context) {
 	id := c.Param("id")
+	logging.Logger.Debug("get event", zap.String("id", id))
 	if !s.validateOwner(c, id) {
 		return
 	}
 
 	event, err := s.service.GetEvent(id)
 	if err != nil {
-		log.Printf("get event: %v", err)
+		logging.Logger.Error("get event", zap.Error(err))
 		api.ServerErrorA(c, err)
 		return
 	}
@@ -65,6 +68,7 @@ func (s *Server) PostEvent(c *gin.Context) {
 		api.BadJSONA(c)
 		return
 	}
+	logging.Logger.Debug("post event", zap.Any("payload", req))
 	if err := s.valid.Validate(&req); err != nil {
 		api.BadRequestA(c, err)
 		return
@@ -72,7 +76,7 @@ func (s *Server) PostEvent(c *gin.Context) {
 
 	e, err := s.service.CreateEvent(auth.GetContext(c).Username(), req.Title, req.Description, req.Time, req.Timezone, time.Duration(req.Duration)*time.Minute, req.Notes)
 	if err != nil {
-		log.Printf("create event: %v\n", err)
+		logging.Logger.Error("create event", zap.Error(err))
 		api.ServerErrorA(c, err)
 		return
 	}
@@ -88,6 +92,7 @@ func (s *Server) PutEvent(c *gin.Context) {
 		return
 	}
 	req.ID = id
+	logging.Logger.Debug("put event", zap.Any("payload", req))
 
 	if err := s.valid.Validate(&req); err != nil {
 		api.BadRequestA(c, err)
@@ -98,7 +103,7 @@ func (s *Server) PutEvent(c *gin.Context) {
 
 	e, err := s.service.UpdateEvent(req.ID, req.Title, req.Description, req.Time, req.Timezone, time.Duration(req.Duration)*time.Minute, req.Notes)
 	if err != nil {
-		log.Printf("update event: %v\n", err)
+		logging.Logger.Error("update event", zap.Error(err))
 		api.ServerErrorA(c, err)
 		return
 	}
@@ -108,13 +113,13 @@ func (s *Server) PutEvent(c *gin.Context) {
 
 func (s *Server) DeleteEvent(c *gin.Context) {
 	id := c.Param("id")
-
+	logging.Logger.Debug("delete event", zap.String("id", id))
 	if !s.validateOwner(c, id) {
 		return
 	}
 
 	if _, err := s.service.DeleteEvent(id); err != nil {
-		log.Printf("delete event: %v\n", err)
+		logging.Logger.Error("delete event", zap.Error(err))
 		api.ServerErrorA(c, err)
 		return
 	} else {
@@ -151,7 +156,7 @@ func eventToApi(e *models.Event) *api.Event {
 
 func (s *Server) validateOwner(c *gin.Context, eventId string) bool {
 	if owner, err := s.service.GetEventOwner(eventId); err != nil {
-		log.Printf("get owner of event with ID=\"%s\": %v", eventId, err)
+		logging.Logger.Error("get event owner of event", zap.String("ID", eventId), zap.Error(err))
 		api.ServerErrorA(c, err)
 		return false
 	} else if owner == "" {
