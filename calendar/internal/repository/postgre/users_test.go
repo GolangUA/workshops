@@ -24,6 +24,10 @@ func (s *TestSuite) Test_GetUser() {
 			assert.Equal(s.T(), "zone", actual.Timezone)
 		}
 	}
+
+	noUser, err := s.repo.GetUser("no-user")
+	assert.NoError(s.T(), err, "get user")
+	assert.Nil(s.T(), noUser)
 }
 
 func (s *TestSuite) Test_CreateUser() {

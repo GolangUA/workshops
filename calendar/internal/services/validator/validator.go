@@ -2,7 +2,6 @@ package validator
 
 import (
 	"fmt"
-	"github.com/Roma7-7-7/workshops/calendar/api"
 	"github.com/Roma7-7-7/workshops/calendar/internal/logging"
 	"github.com/Roma7-7-7/workshops/calendar/internal/services/calendar"
 	"go.uber.org/zap"
@@ -42,6 +41,11 @@ type UpdateEvent struct {
 	Notes       []string `json:"notes"`
 }
 
+type UserTimezone struct {
+	Username string `json:"username"`
+	Timezone string `json:"timezone"`
+}
+
 func (s *Service) Validate(v interface{}) error {
 	errors := make([]string, 0, 10)
 	switch t := v.(type) {
@@ -76,7 +80,7 @@ func (s *Service) Validate(v interface{}) error {
 			errors = append(errors, "id must not be blank")
 		}
 		errors = validateEventModification(errors, t.Title, t.Time, t.Timezone, t.Duration)
-	case *api.UserTimezone:
+	case *UserTimezone:
 		if strings.TrimSpace(t.Username) == "" {
 			errors = append(errors, "username must not be blank")
 		}

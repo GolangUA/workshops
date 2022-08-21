@@ -44,12 +44,12 @@ func main() {
 	}
 	go func() {
 		if err := appServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			logging.Logger.Error("listen app", zap.Error(err))
+			logging.Logger.Fatal("listen app", zap.Error(err))
 		}
 	}()
 	go func() {
 		if err := metricsServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			logging.Logger.Error("listen metrics", zap.Error(err))
+			logging.Logger.Fatal("listen metrics", zap.Error(err))
 		}
 	}()
 

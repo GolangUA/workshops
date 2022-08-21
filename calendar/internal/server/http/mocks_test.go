@@ -705,7 +705,7 @@ func (mock *AuthMock) LogoutCalls() []struct {
 }
 
 // Validate calls ValidateFunc.
-func (mock *AuthMock) Validate(c *gin.Context) {
+func (mock *AuthMock) ValidateGin(c *gin.Context) {
 	if mock.ValidateFunc == nil {
 		panic("AuthMock.ValidateFunc: method is nil but Auth.Validate was just called")
 	}

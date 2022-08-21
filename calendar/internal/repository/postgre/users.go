@@ -15,7 +15,9 @@ func (r *Repository) GetUser(name string) (*models.User, error) {
 		RunWith(r.db).
 		QueryRow().
 		Scan(&user.Name, &user.Password, &user.Timezone)
-	if err != nil {
+	if err == sql.ErrNoRows {
+		return nil, nil
+	} else if err != nil {
 		return nil, fmt.Errorf("get user: %v", err)
 	}
 	return &user, nil

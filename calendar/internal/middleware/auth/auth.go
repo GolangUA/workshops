@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"fmt"
 	"github.com/Roma7-7-7/workshops/calendar/api"
 	"github.com/Roma7-7-7/workshops/calendar/internal/logging"
@@ -10,6 +11,8 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 	"net/http"
 	"time"
 )
@@ -42,6 +45,10 @@ func (c *Context) UserTimezone() string {
 
 func GetContext(c *gin.Context) *Context {
 	return c.MustGet(ContextKey).(*Context)
+}
+
+func GetContextGrpc(ctx context.Context) *Context {
+	return ctx.Value(ContextKey).(*Context)
 }
 
 func (m *Middleware) Login(c *gin.Context) {
@@ -91,7 +98,7 @@ func (m *Middleware) Logout(c *gin.Context) {
 	c.SetCookie("token", "", -1, "/", "calendar-app", false, false)
 }
 
-func (m *Middleware) Validate(c *gin.Context) {
+func (m *Middleware) ValidateGin(c *gin.Context) {
 	tokenS, err := c.Cookie("token")
 	if err == http.ErrNoCookie || (err == nil && tokenS == "") {
 		api.UnauthorizedA(c, "request is not authenticated")
@@ -110,6 +117,27 @@ func (m *Middleware) Validate(c *gin.Context) {
 		JWT: cl,
 	})
 	metrics.IncRequest(cl.Subject)
+}
+
+func (m *Middleware) ValidateGrpc(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return nil, fmt.Errorf("missing metadata")
+	}
+	mdToken, ok := md["jwt"]
+	if !ok || len(mdToken) != 1 {
+		return nil, fmt.Errorf("missing jwt")
+	}
+	tokenS := mdToken[0]
+
+	cl := &Claims{}
+	if _, err := jwt.ParseWithClaims(tokenS, cl, m.keyFunc); err != nil {
+		return nil, err
+	}
+	metrics.IncRequest(cl.Subject)
+	return handler(context.WithValue(ctx, ContextKey, &Context{
+		JWT: cl,
+	}), req)
 }
 
 func (m *Middleware) keyFunc(token *jwt.Token) (interface{}, error) {

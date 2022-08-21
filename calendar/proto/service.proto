@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+option go_package = "./proto";
+
+message Event {
+  optional string id = 1;
+  string title = 2;
+  optional string description = 3;
+  string time = 4;
+  string time_zone = 5;
+  uint32 duration = 6;
+  repeated string notes = 7;
+}
+
+message EmptyResponse {}
+
+message GetEventsRequest {
+  optional string title = 1;
+  optional string timezone = 2;
+  optional string date_from = 3;
+  optional string time_from = 4;
+  optional string date_to = 5;
+  optional string time_to = 6;
+}
+
+message GetEventsResponse {
+  repeated Event events = 1;
+}
+
+message GetEventRequest {
+  string id = 1;
+}
+
+message GetEventResponse {
+  Event event = 1;
+}
+
+message CreateEventRequest {
+  Event event = 1;
+}
+
+message CreateEventResponse {
+  Event event = 1;
+}
+
+message UpdateEventRequest {
+  Event event = 1;
+}
+
+message UpdateEventResponse {
+  Event event = 1;
+}
+
+message DeleteEventRequest {
+  string id = 1;
+}
+
+message UserTimezone {
+  string username = 1;
+  string timezone = 2;
+}
+
+message UpdateUserTimezoneRequest {
+  UserTimezone user_timezone = 1;
+}
+
+message UpdateUserTimezoneResponse {
+  UserTimezone user_timezone = 1;
+}
+
+service Service {
+  rpc GetEvents(GetEventsRequest) returns (GetEventsResponse);
+  rpc GetEvent(GetEventRequest) returns (GetEventResponse);
+  rpc CreateEvent(CreateEventRequest) returns (CreateEventResponse);
+  rpc UpdateEvent(UpdateEventRequest) returns (UpdateEventResponse);
+  rpc DeleteEvent(DeleteEventRequest) returns (EmptyResponse);
+  rpc UpdateUserTimezone(UpdateUserTimezoneRequest) returns (UpdateUserTimezoneResponse);
+}

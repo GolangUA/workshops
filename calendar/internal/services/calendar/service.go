@@ -40,6 +40,8 @@ func (s *Service) GetEvents(username, title, dateFrom, timeFrom, dateTo, timeTo,
 	user, err := s.repo.GetUser(username)
 	if err != nil {
 		return nil, err
+	} else if user == nil {
+		return nil, fmt.Errorf("user not found")
 	}
 	userTimezone := user.Timezone
 

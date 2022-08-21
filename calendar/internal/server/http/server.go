@@ -1,8 +1,10 @@
 package http
 
 import (
+	"context"
 	"github.com/Roma7-7-7/workshops/calendar/internal/models"
 	"github.com/gin-gonic/gin"
+	"google.golang.org/grpc"
 	"time"
 )
 
@@ -25,7 +27,8 @@ type Service interface {
 type Auth interface {
 	Login(c *gin.Context)
 	Logout(c *gin.Context)
-	Validate(c *gin.Context)
+	ValidateGin(c *gin.Context)
+	ValidateGrpc(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error)
 }
 
 type Server struct {

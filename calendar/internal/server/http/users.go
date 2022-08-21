@@ -5,13 +5,14 @@ import (
 	"github.com/Roma7-7-7/workshops/calendar/internal/logging"
 	"github.com/Roma7-7-7/workshops/calendar/internal/middleware/auth"
 	"github.com/Roma7-7-7/workshops/calendar/internal/models"
+	"github.com/Roma7-7-7/workshops/calendar/internal/services/validator"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"net/http"
 )
 
 func (s *Server) UpdateUserTimezone(c *gin.Context) {
-	var req api.UserTimezone
+	var req validator.UserTimezone
 	if err := c.BindJSON(&req); err != nil {
 		api.BadJSONA(c)
 		return

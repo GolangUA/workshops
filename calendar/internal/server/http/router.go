@@ -24,10 +24,10 @@ func (s *Server) Register(app *gin.Engine, metrics *gin.Engine) {
 	app.POST("/login", s.auth.Login)
 	app.GET("/logout", s.auth.Logout)
 
-	api := app.Group("/api")
-	api.Use(s.auth.Validate)
-	s.registerEvents(api.Group("/events"))
-	api.PUT("/user", s.UpdateUserTimezone)
+	apiG := app.Group("/api")
+	apiG.Use(s.auth.ValidateGin)
+	s.registerEvents(apiG.Group("/events"))
+	apiG.PUT("/user", s.UpdateUserTimezone)
 
 	metrics.GET("/metrics/prometheus", gin.WrapH(promhttp.Handler()))
 	appMetrics.Init(s.service.GetUsersCount, s.service.GetEventsCount)
