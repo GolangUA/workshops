@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/segmentio/kafka-go"
 	"os"
 	"strings"
@@ -26,7 +25,7 @@ var loadCmd = &cobra.Command{
 		}
 		defer file.Close()
 
-		writer = KafkaConfigInstance.NewWriter()
+		writer := KafkaConfigInstance.NewWriter()
 		defer writer.Close()
 
 		var msgs []kafka.Message
@@ -75,7 +74,6 @@ var Separator *string
 
 var headers []string
 var idColumnIndex int
-var writer *kafka.Writer
 
 func parseHeader(value string) {
 	parts := strings.Split(value, *Separator)
@@ -104,27 +102,12 @@ func parseLine(value string) (string, map[string]string) {
 	return id, data
 }
 
-func Write(key string, value map[string]string) error {
-	jsonVal, err := json.Marshal(value)
-	if err != nil {
-		return fmt.Errorf("failed to marshal json: %v", err)
-	}
-	err = writer.WriteMessages(context.Background(), kafka.Message{
-		Key:   []byte(key),
-		Value: jsonVal,
-	})
-	if err != nil {
-		return fmt.Errorf("failed to write message: %v", err)
-	}
-	return nil
-}
-
 func init() {
 	rootCmd.AddCommand(loadCmd)
 
-	InputFile = loadCmd.Flags().StringP("file", "f", "", "Input file")
-	IDColumn = loadCmd.Flags().StringP("id-column", "i", "", "ID column name")
-	Separator = loadCmd.Flags().StringP("separator", "s", "\t", "Separator")
+	InputFile = loadCmd.Flags().String("file", "", "Input file")
+	IDColumn = loadCmd.Flags().String("id-column", "", "ID column name")
+	Separator = loadCmd.Flags().String("separator", "\t", "Separator")
 
 	loadCmd.MarkFlagRequired("file")
 	loadCmd.MarkFlagRequired("id-column")
